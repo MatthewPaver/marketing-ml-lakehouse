@@ -10,11 +10,14 @@ LAKEHOUSE_DIR: Path = PROJECT_ROOT / "lakehouse"
 DB_FILE: Path = LAKEHOUSE_DIR / "lakehouse.duckdb"
 MODELS_DIR: Path = LAKEHOUSE_DIR / "models"
 
-# Raw CSV file inputs (kept at repository root as per brief)
-RAW_AUDIENCE_SEGMENTS: Path = PROJECT_ROOT / "audience_segments.csv"
-RAW_BUDGET_PACING: Path = PROJECT_ROOT / "budget_pacing.csv"
-RAW_META_PERF: Path = PROJECT_ROOT / "meta_campaign_performance.csv"
-RAW_CONVERSIONS: Path = PROJECT_ROOT / "conversion_events.csv"
+# Raw CSV file inputs
+# We read from the self-contained demo dataset under marketing-ml/data/raw to avoid
+# needing duplicate CSVs at the repository root. This keeps data in one place.
+RAW_DIR: Path = PROJECT_ROOT / "marketing-ml" / "data" / "raw"
+RAW_AUDIENCE_SEGMENTS: Path = RAW_DIR / "audience_segments.csv"
+RAW_BUDGET_PACING: Path = RAW_DIR / "budget_pacing.csv"
+RAW_META_PERF: Path = RAW_DIR / "meta_campaign_performance.csv"
+RAW_CONVERSIONS: Path = RAW_DIR / "conversion_events.csv"
 
 # DuckDB schema names for each layer
 SCHEMA_BRONZE: str = "bronze"
