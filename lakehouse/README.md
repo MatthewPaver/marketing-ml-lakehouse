@@ -24,7 +24,7 @@ python -m lakehouse.run_all
 ```
 This will:
 - Create `lakehouse/lakehouse.duckdb` and schemas (`bronze`, `silver`, `gold`)
-- Ingest CSVs from repo root into `bronze`
+- Ingest CSVs from `marketing-ml/data/raw/` into `bronze`
 - Clean/standardise into `silver`
 - Aggregate features into `gold`
 - Compute a Data Quality report into `gold.data_quality_report`
