@@ -1,0 +1,13 @@
+duckdb
+polars
+pandas
+pyarrow
+scikit-learn
+xgboost
+joblib
+streamlit
+plotly
+matplotlib
+requests
+pdfkit
+pytest

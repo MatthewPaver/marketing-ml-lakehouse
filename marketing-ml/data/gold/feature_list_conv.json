@@ -1,0 +1,11 @@
+{
+  "features": [
+    "ctr",
+    "conv_7d",
+    "clicks",
+    "impressions",
+    "spend",
+    "aud_daily_budget",
+    "pacing_ratio"
+  ]
+}

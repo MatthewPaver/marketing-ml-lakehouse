@@ -1,0 +1,7 @@
+﻿ad_set_id,ad_set_name,target_age,target_interests,lookalike_source,daily_budget
+AS_001,Premium_Travelers_25-45,25-45,"luxury travel, business class, premium hotels",high_value_customers,500
+AS_002,Budget_Conscious_Families,28-50,"family travel, budget flights, vacation deals",family_bookers,300
+AS_003,Business_Travel_Professionals,30-55,"business travel, corporate hotels, frequent flyer",business_customers,450
+AS_004,Young_Adventure_Seekers,18-30,"adventure travel, backpacking, hostels, budget airlines",adventure_travelers,250
+AS_005,Luxury_Honeymoon_Couples,25-40,"romantic destinations, luxury resorts, honeymoon packages",luxury_couples,400
+AS_006,Senior_Leisure_Travelers,55+,"cruise travel, guided tours, leisure destinations",senior_travelers,350

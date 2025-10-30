@@ -1,0 +1,36 @@
+{
+  "model": "XGBRegressor",
+  "target": "target_bookings",
+  "features": [
+    "impressions",
+    "clicks",
+    "spend",
+    "ctr",
+    "cpm",
+    "frequency",
+    "planned_spend",
+    "actual_spend",
+    "budget_utilization",
+    "pacing_status_idx",
+    "soft_conversions",
+    "revenue"
+  ],
+  "importances": [
+    0.08833280205726624,
+    0.08302346616983414,
+    0.06159374117851257,
+    0.07585375010967255,
+    0.04466651380062103,
+    0.017267858609557152,
+    0.1867421716451645,
+    0.03909885138273239,
+    0.035755231976509094,
+    0.10643786191940308,
+    0.009052383713424206,
+    0.25217536091804504
+  ],
+  "metrics": {
+    "mae": 0.25764068502646226,
+    "r2": 0.7171409556409247
+  }
+}
