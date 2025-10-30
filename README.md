@@ -1,23 +1,31 @@
-# Marketing ML Lakehouse (Monorepo)
+# Marketing ML – Local Lakehouse Dashboard
 
-This repository contains a runnable lakehouse project:
-
-- lakehouse/: a modular package with pipeline, models, and a dashboard app.
+End‑to‑end local lakehouse: DuckDB (bronze→silver→gold), pandas transforms, XGBoost models, and a Streamlit dashboard.
 
 ## Getting started
 
 - Python 3.10–3.13 on macOS or Linux
-- Create a virtual environment and install requirements:
+- From the repository root, create a virtual environment and install requirements:
 
 ```bash
-# Run the lakehouse package
 python -m venv .venv && source .venv/bin/activate
 pip install -r lakehouse/requirements.txt
+```
+
+Run the full pipeline and launch the dashboard:
+
+```bash
 python -m lakehouse.run_all
 streamlit run lakehouse/dashboard/app.py
 ```
 
-Data note: raw CSVs live under `marketing-ml/data/raw/`. Large artefacts (models, databases, and datasets) are intentionally ignored by Git; Git LFS tracks `*.pkl` and `*.duckdb` if you decide to include them.
+Data note: raw CSVs are read from `marketing-ml/data/raw/` (kept in-repo for convenience):
+- `audience_segments.csv`
+- `budget_pacing.csv`
+- `conversion_events.csv`
+- `meta_campaign_performance.csv`
+
+Large artefacts (models, DuckDB files, datasets) are ignored by Git; Git LFS tracks `*.pkl` and `*.duckdb` if you choose to include them.
 
 ## Repo hygiene
 
