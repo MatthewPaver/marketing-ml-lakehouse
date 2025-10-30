@@ -8,22 +8,14 @@ This repository contains two runnable, local projects:
 ## Getting started
 
 - Python 3.10–3.13 on macOS or Linux
-- Create a virtual environment and install requirements for the project you want to run:
+- Run the Marketing‑ML demo (includes data, pipeline, and dashboard):
 
 ```bash
-# Option A: run the marketing-ml demo
 cd marketing-ml
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 python scripts/run_all.py
 streamlit run app/dashboard.py
-
-# Option B: run the lakehouse package
-cd ..
-python -m venv .venv && source .venv/bin/activate
-pip install -r lakehouse/requirements.txt
-python -m lakehouse.run_all
-streamlit run lakehouse/dashboard/app.py
 ```
 
 Data note: raw CSVs live under marketing-ml/data/raw/ (see that README for file names). Large artefacts (models, databases, and datasets) are intentionally ignored by Git; Git LFS tracks *.pkl and *.duckdb if you decide to include them.
