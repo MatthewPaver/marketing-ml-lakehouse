@@ -20,7 +20,7 @@ train-clf:
 	$(PYTHON) -m lakehouse.ml.train_underpacing
 
 dashboard:
-	$(VENV)/bin/streamlit run lakehouse/dashboard/app.py
+	PYTHONPATH=$(PWD) $(VENV)/bin/streamlit run lakehouse/dashboard/app.py
 
 # Docker
 

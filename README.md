@@ -16,7 +16,7 @@ Run the full pipeline and launch the dashboard:
 
 ```bash
 python -m lakehouse.run_all
-streamlit run lakehouse/dashboard/app.py
+PYTHONPATH=$(pwd) streamlit run lakehouse/dashboard/app.py
 ```
 
 Data note: raw CSVs are read from `marketing-ml/data/raw/` (kept in-repo for convenience):
