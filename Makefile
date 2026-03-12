@@ -11,7 +11,7 @@ venv:
 	$(PIPBIN) install --upgrade pip
 
 install: venv
-	$(PIPBIN) install -r lakehouse/requirements.txt
+	$(PIPBIN) install -r requirements.txt
 
 run:
 	$(PYTHON) -m lakehouse.run_all

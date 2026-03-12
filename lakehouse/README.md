@@ -10,15 +10,17 @@ This project mirrors a Databricks-style pipeline locally: raw → bronze → sil
 
 ## Quick start
 
-1) Create and activate a virtual environment (Python 3.10–3.13):
+The canonical setup path for this repository now lives at the repository root. If you are starting fresh, prefer:
+
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install --upgrade pip
-pip install -r lakehouse/requirements.txt
+pip install -r requirements.txt
 ```
 
-2) Run the full pipeline locally:
+Then continue with the commands below.
+
+1) Run the full pipeline locally:
 ```bash
 python -m lakehouse.run_all
 ```
@@ -31,7 +33,7 @@ This will:
 - Train an XGBoost regression model and store artefacts under `lakehouse/models/`
 - Train an under‑pacing classifier and store artefacts
 
-3) Start the dashboard:
+2) Start the dashboard:
 ```bash
 streamlit run lakehouse/dashboard/app.py
 ```

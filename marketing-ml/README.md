@@ -1,4 +1,6 @@
-# marketing-ml-lakehouse (local lakehouse demo)
+# marketing-ml-lakehouse (legacy reference)
+
+> This subtree is retained as a legacy reference. The active implementation for this repository now lives under [`../lakehouse`](../lakehouse) and should be run from the repository root.
 
 Local, offline lakehouse mirroring Databricks layers (bronze→silver→gold) with DuckDB, Pandas ETL, XGBoost, and a Streamlit app. Optional LM Studio provides “Next steps” actions.
 
