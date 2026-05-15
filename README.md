@@ -24,6 +24,21 @@ This repository contains a local-first marketing analytics stack built around:
 - ML training for performance and pacing
 - a Streamlit dashboard for exploration and presentation
 
+## System Shape
+
+```mermaid
+flowchart LR
+    A["Raw marketing CSVs"] --> B["Bronze tables"]
+    B --> C["Silver cleaned data"]
+    C --> D["Gold features"]
+    D --> E["XGBoost models"]
+    D --> F["Data quality checks"]
+    E --> G["Streamlit dashboard"]
+    F --> G
+```
+
+The project is designed to show a full local analytics workflow: ingestion, transformation, feature building, model training, quality checks, and dashboard consumption.
+
 ## Canonical Entry Point
 
 The active implementation lives under [`lakehouse/`](lakehouse).
