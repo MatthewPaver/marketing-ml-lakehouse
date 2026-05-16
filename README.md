@@ -35,6 +35,13 @@ This repository contains a local-first marketing analytics stack built around:
 - ML training for performance and pacing
 - a Streamlit dashboard for exploration and presentation
 
+## Reviewer Notes
+
+- **Reproducible path:** root `Makefile` and `requirements.txt` are the canonical entry points.
+- **Data engineering signal:** bronze, silver, and gold layers make the pipeline auditable rather than a one-off notebook.
+- **ML signal:** model training sits after feature construction, with dashboard consumption separated from pipeline execution.
+- **Verification path:** run `python -m pytest` after setup; use `make run` and `make dashboard` for the full local flow.
+
 ## System Shape
 
 ```mermaid
