@@ -14,6 +14,17 @@
 
 ---
 
+## Portfolio Quick Read
+
+| Section | Where to look |
+|:---|:---|
+| What it solves | Turns raw marketing CSVs into a repeatable local analytics and ML workflow |
+| Quick start | [`make install`](#canonical-setup), [`make run`](#run-the-pipeline), [`make dashboard`](#run-the-dashboard) |
+| Screenshot | [Portfolio Store](https://matthewpaver.github.io/MatthewPaver/store/) |
+| Architecture | [System Shape](#system-shape) |
+| Tests | `python -m pytest` after installing `requirements.txt` |
+| Tech stack | `Python` `DuckDB` `pandas` `XGBoost` `Streamlit` |
+
 ## Status
 
 `Runnable application`
