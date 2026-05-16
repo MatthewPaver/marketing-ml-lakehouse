@@ -4,7 +4,7 @@ VENV=.venv
 PYTHON=$(VENV)/bin/python
 PIPBIN=$(VENV)/bin/pip
 
-.PHONY: venv install run dashboard train-clf docker-build docker-run-pipeline docker-run-dashboard
+.PHONY: venv install run dashboard train-clf test docker-build docker-run-pipeline docker-run-dashboard
 
 venv:
 	python3 -m venv $(VENV)
@@ -21,6 +21,9 @@ train-clf:
 
 dashboard:
 	PYTHONPATH=$(PWD) $(VENV)/bin/streamlit run lakehouse/dashboard/app.py
+
+test: install
+	$(PYTHON) -m pytest marketing-ml/tests -q
 
 # Docker
 
