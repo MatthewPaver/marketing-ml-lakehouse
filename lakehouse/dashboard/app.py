@@ -142,7 +142,7 @@ with tab_overview:
         legend=dict(orientation="h", y=-0.2),
         margin=dict(t=40, r=10, l=10, b=10),
     )
-    st.plotly_chart(fig_combo, use_container_width=True)
+    st.plotly_chart(fig_combo, width="stretch")
 
     # ROAS bar per ad set (sorted)
     st.subheader("ROAS by ad set (sorted)")
@@ -152,7 +152,7 @@ with tab_overview:
     fig_roas = px.bar(roas_sorted, x="roas", y="ad_set_id", orientation="h", title="Average ROAS (higher is better)", template=PX_TEMPLATE, color="roas", color_continuous_scale="Blues")
     fig_roas.update_xaxes(title="ROAS (x)")
     fig_roas.update_yaxes(title="Ad set")
-    st.plotly_chart(fig_roas, use_container_width=True)
+    st.plotly_chart(fig_roas, width="stretch")
 
     # Pacing status stacked bar by day
     st.subheader("Pacing status by day")
@@ -165,7 +165,7 @@ with tab_overview:
         "unknown": "#7f7f7f",
     })
     fig_pace.update_yaxes(title="Ad set count")
-    st.plotly_chart(fig_pace, use_container_width=True)
+    st.plotly_chart(fig_pace, width="stretch")
 
     # Top/bottom ROAS table
     st.subheader("Top/bottom ROAS")
@@ -175,11 +175,11 @@ with tab_overview:
     with c1:
         st.caption("Top 5 ad sets by ROAS")
         top_display = top.rename(columns={"ad_set_id": "Ad set", "spend": f"Spend ({CURRENCY_PREFIX})", "revenue": f"Revenue ({CURRENCY_PREFIX})", "roas": "ROAS (x)"})
-        st.dataframe(top_display, use_container_width=True)
+        st.dataframe(top_display, width="stretch")
     with c2:
         st.caption("Bottom 5 ad sets by ROAS")
         bottom_display = bottom.rename(columns={"ad_set_id": "Ad set", "spend": f"Spend ({CURRENCY_PREFIX})", "revenue": f"Revenue ({CURRENCY_PREFIX})", "roas": "ROAS (x)"})
-        st.dataframe(bottom_display, use_container_width=True)
+        st.dataframe(bottom_display, width="stretch")
 
     # Summary
     st.subheader("Summary")
@@ -221,9 +221,9 @@ with tab_dq:
                 "max": "Max",
                 "generated_at": "Generated at",
             })
-            st.dataframe(pretty, use_container_width=True)
+            st.dataframe(pretty, width="stretch")
         with st.expander("Show full DQ table"):
-            st.dataframe(dq_df, use_container_width=True)
+            st.dataframe(dq_df, width="stretch")
 
 with tab_models:
     st.caption("How well we predict outcomes and what drives the predictions.")
@@ -239,7 +239,7 @@ with tab_models:
             imp_df = pd.DataFrame({"feature": meta["features"], "importance_%": imp_pct}).sort_values("importance_%", ascending=False)
             fig_imp = px.bar(imp_df, x="importance_%", y="feature", orientation="h", title="Feature importances (regression)", template=PX_TEMPLATE, color="importance_%", color_continuous_scale="Tealgrn")
             fig_imp.update_xaxes(title="Importance (%)")
-            st.plotly_chart(fig_imp, use_container_width=True)
+            st.plotly_chart(fig_imp, width="stretch")
     else:
         st.info("Regression artefacts not found. Train the model after building gold tables.")
 
@@ -256,7 +256,7 @@ with tab_models:
             cimp_df = pd.DataFrame({"feature": clf_meta["features"], "importance_%": cimp_pct}).sort_values("importance_%", ascending=False)
             fig_cimp = px.bar(cimp_df, x="importance_%", y="feature", orientation="h", title="Feature importances (classification)", template=PX_TEMPLATE, color="importance_%", color_continuous_scale="Purpor")
             fig_cimp.update_xaxes(title="Importance (%)")
-            st.plotly_chart(fig_cimp, use_container_width=True)
+            st.plotly_chart(fig_cimp, width="stretch")
 
         st.markdown("### AUC before/after with label noise")
         noise = st.slider("Label noise (flip % of labels)", 0.0, 0.3, 0.1, 0.01)
@@ -285,7 +285,7 @@ with tab_models:
                 roc_fig.add_trace(go.Scatter(x=fpr1, y=tpr1, mode="lines", name=f"Noisy ROC (AUC {auc_noisy:.3f})"))
                 roc_fig.add_trace(go.Scatter(x=[0,1], y=[0,1], mode="lines", name="Chance", line=dict(dash="dash")))
                 roc_fig.update_layout(template=PX_TEMPLATE, title="ROC curves: baseline vs noisy labels")
-                st.plotly_chart(roc_fig, use_container_width=True)
+                st.plotly_chart(roc_fig, width="stretch")
         except Exception as e:
             st.warning(f"Could not compute AUC comparison: {e}")
     else:

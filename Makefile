@@ -1,3 +1,4 @@
+BOOTSTRAP_PYTHON ?= python3.11
 PY=python
 PIP=pip
 VENV=.venv
@@ -7,7 +8,7 @@ PIPBIN=$(VENV)/bin/pip
 .PHONY: venv install run dashboard train-clf test docker-build docker-run-pipeline docker-run-dashboard
 
 venv:
-	python3 -m venv $(VENV)
+	$(BOOTSTRAP_PYTHON) -m venv $(VENV)
 	$(PIPBIN) install --upgrade pip
 
 install: venv

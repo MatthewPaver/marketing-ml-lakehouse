@@ -9,10 +9,13 @@
 ![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)
 ![XGBoost](https://img.shields.io/badge/XGBoost-ML-FF6B00?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
+[![Validate](https://github.com/MatthewPaver/marketing-ml-lakehouse/actions/workflows/validate.yml/badge.svg)](https://github.com/MatthewPaver/marketing-ml-lakehouse/actions/workflows/validate.yml)
 
 </div>
 
 ---
+
+![Marketing ML Lakehouse dashboard](docs/assets/dashboard.png)
 
 ## Portfolio Quick Read
 
@@ -56,6 +59,8 @@ This repository contains a local-first marketing analytics stack built around:
 - **Verification path:** run `python -m pytest` after setup; use `make run` and `make dashboard` for the full local flow.
 
 ## System Shape
+
+![Marketing ML Lakehouse architecture](docs/assets/architecture.svg)
 
 ```mermaid
 flowchart LR
