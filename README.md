@@ -35,6 +35,19 @@ This repository contains a local-first marketing analytics stack built around:
 - ML training for performance and pacing
 - a Streamlit dashboard for exploration and presentation
 
+## Reviewer Pack
+
+| Area | Details |
+|:---|:---|
+| What it solves | Raw campaign CSVs become an inspectable bronze, silver, and gold lakehouse with model training and dashboard review. |
+| Screenshot | [Portfolio Store preview](https://matthewpaver.github.io/MatthewPaver/store/preview.html?app=lakehouse) |
+| Run locally | `make install && make run` |
+| Dashboard | `make dashboard` then open `http://localhost:8501` |
+| Tests | `make test` |
+| Demo data | Included under `marketing-ml/data/raw/` |
+| Architecture | Raw CSVs -> DuckDB bronze/silver/gold -> XGBoost models -> data-quality checks -> Streamlit dashboard |
+| Limitations | Local-first demonstration with sample marketing data; not connected to a live ad-platform API. |
+
 ## Reviewer Notes
 
 - **Reproducible path:** root `Makefile` and `requirements.txt` are the canonical entry points.
