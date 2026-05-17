@@ -44,3 +44,7 @@ logs/
 
 # Cache
 *.cache
+
+# DuckDB build artifacts (pipeline rebuilds these from raw CSVs)
+*.duckdb
+**/lakehouse.duckdb
