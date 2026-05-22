@@ -25,7 +25,7 @@
 | Quick start | [`make install`](#canonical-setup), [`make run`](#run-the-pipeline), [`make dashboard`](#run-the-dashboard) |
 | Screenshot | [Portfolio Store](https://matthewpaver.github.io/MatthewPaver/store/) |
 | Architecture | [System Shape](#system-shape) |
-| Tests | `python -m pytest` after installing `requirements.txt` |
+| Tests | `make test` rebuilds the local lakehouse and runs validation |
 | Tech stack | `Python` `DuckDB` `pandas` `XGBoost` `Streamlit` |
 
 ## Status
@@ -46,7 +46,7 @@ This repository contains a local-first marketing analytics stack built around:
 | Screenshot | [Portfolio Store preview](https://matthewpaver.github.io/MatthewPaver/store/preview.html?app=lakehouse) |
 | Run locally | `make install && make run` |
 | Dashboard | `make dashboard` then open `http://localhost:8501` |
-| Tests | `make test` |
+| Tests | `make test` rebuilds DuckDB/models from demo data, then runs pytest |
 | Demo data | Included under `marketing-ml/data/raw/` |
 | Architecture | Raw CSVs -> DuckDB bronze/silver/gold -> XGBoost models -> data-quality checks -> Streamlit dashboard |
 | Limitations | Local-first demonstration with sample marketing data; not connected to a live ad-platform API. |
@@ -56,7 +56,7 @@ This repository contains a local-first marketing analytics stack built around:
 - **Reproducible path:** root `Makefile` and `requirements.txt` are the canonical entry points.
 - **Data engineering signal:** bronze, silver, and gold layers make the pipeline auditable rather than a one-off notebook.
 - **ML signal:** model training sits after feature construction, with dashboard consumption separated from pipeline execution.
-- **Verification path:** run `python -m pytest` after setup; use `make run` and `make dashboard` for the full local flow.
+- **Verification path:** run `make test` after setup; it rebuilds the local DuckDB/models from demo data before running pytest. Use `make run` and `make dashboard` for the full local flow.
 
 ## System Shape
 

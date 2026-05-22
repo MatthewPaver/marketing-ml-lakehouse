@@ -48,3 +48,4 @@ logs/
 # DuckDB build artifacts (pipeline rebuilds these from raw CSVs)
 *.duckdb
 **/lakehouse.duckdb
+lakehouse/models/

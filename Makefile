@@ -24,6 +24,7 @@ dashboard:
 	PYTHONPATH=$(PWD) $(VENV)/bin/streamlit run lakehouse/dashboard/app.py
 
 test: install
+	$(PYTHON) -m lakehouse.run_all
 	$(PYTHON) -m pytest marketing-ml/tests -q
 
 # Docker

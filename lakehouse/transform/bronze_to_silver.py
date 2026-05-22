@@ -32,6 +32,15 @@ def clean_meta(df: pd.DataFrame) -> pd.DataFrame:
     for col in ["spend", "ctr", "cpm", "frequency"]:
         df[col] = pd.to_numeric(df[col], errors="coerce")
 
+    # Some demo rows intentionally contain conflicting duplicate keys. Keep the
+    # most complete, non-negative record for the daily ad-set grain.
+    df["_quality_score"] = df["impressions"].notna().astype(int) + (df["spend"].fillna(-1) >= 0).astype(int)
+    df = (
+        df.sort_values(["ad_set_id", "date", "_quality_score"], ascending=[True, True, False])
+        .drop_duplicates(subset=["ad_set_id", "date"], keep="first")
+        .drop(columns=["_quality_score"])
+    )
+
     # Fix negative spend → 0
     df.loc[df["spend"] < 0, "spend"] = 0.0
 
@@ -39,13 +48,12 @@ def clean_meta(df: pd.DataFrame) -> pd.DataFrame:
     df = df.dropna(subset=["ad_set_id", "date"])
 
     # Recompute metrics where possible (divide-by-zero safe)
-    with pd.option_context("mode.use_inf_as_na", True):
-        df["ctr"] = (df["clicks"].astype("float") / df["impressions"].astype("float") * 100.0).where(
-            df["impressions"].fillna(0) > 0, df["ctr"]
-        )
-        df["cpm"] = (df["spend"].astype("float") / df["impressions"].astype("float") * 1000.0).where(
-            df["impressions"].fillna(0) > 0, df["cpm"]
-        )
+    df["ctr"] = (df["clicks"].astype("float") / df["impressions"].astype("float") * 100.0).where(
+        df["impressions"].fillna(0) > 0, df["ctr"]
+    )
+    df["cpm"] = (df["spend"].astype("float") / df["impressions"].astype("float") * 1000.0).where(
+        df["impressions"].fillna(0) > 0, df["cpm"]
+    )
 
     # Drop exact duplicates
     df = df.drop_duplicates()
