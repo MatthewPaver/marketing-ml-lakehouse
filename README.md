@@ -56,6 +56,7 @@ This repository contains a local-first marketing analytics stack built around:
 - **Reproducible path:** root `Makefile` and `requirements.txt` are the canonical entry points.
 - **Data engineering signal:** bronze, silver, and gold layers make the pipeline auditable rather than a one-off notebook.
 - **ML signal:** model training sits after feature construction, with dashboard consumption separated from pipeline execution.
+- **Agent signal:** `lakehouse/agents.py` adds deterministic data-quality, feature-drift, campaign-insight, and model-risk reviewers around the pipeline.
 - **Verification path:** run `make test` after setup; it rebuilds the local DuckDB/models from demo data before running pytest. Use `make run` and `make dashboard` for the full local flow.
 
 ## System Shape
