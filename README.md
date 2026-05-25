@@ -51,6 +51,20 @@ This repository contains a local-first marketing analytics stack built around:
 | Architecture | Raw CSVs -> DuckDB bronze/silver/gold -> XGBoost models -> data-quality checks -> Streamlit dashboard |
 | Limitations | Local-first demonstration with sample marketing data; not connected to a live ad-platform API. |
 
+## Practical Test
+
+Can raw campaign CSVs rebuild a trusted analytics product from scratch?
+
+The useful check is the full path:
+
+1. Load raw files into DuckDB.
+2. Build bronze, silver, and gold tables.
+3. Train the model from generated features.
+4. Run quality and risk checks.
+5. Open the Streamlit dashboard and inspect the result.
+
+That is the point of the repo: prove the local analytics loop is repeatable, not just show a finished chart.
+
 ## Reviewer Notes
 
 - **Reproducible path:** root `Makefile` and `requirements.txt` are the canonical entry points.
