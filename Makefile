@@ -5,7 +5,7 @@ VENV=.venv
 PYTHON=$(VENV)/bin/python
 PIPBIN=$(VENV)/bin/pip
 
-.PHONY: venv install run dashboard train-clf test docker-build docker-run-pipeline docker-run-dashboard
+.PHONY: venv install run dashboard train-clf test docker-build docker-run-pipeline docker-run-dashboard compose-pipeline compose-dashboard
 
 venv:
 	$(BOOTSTRAP_PYTHON) -m venv $(VENV)
@@ -25,7 +25,7 @@ dashboard:
 
 test: install
 	$(PYTHON) -m lakehouse.run_all
-	$(PYTHON) -m pytest marketing-ml/tests -q
+	$(PYTHON) -m pytest tests -q
 
 # Docker
 
@@ -37,3 +37,9 @@ docker-run-pipeline:
 
 docker-run-dashboard:
 	docker run --rm -p 8501:8501 -v "$(PWD)":/app local-lakehouse bash -lc "streamlit run lakehouse/dashboard/app.py --server.port 8501 --server.address 0.0.0.0"
+
+compose-pipeline:
+	docker compose run --rm pipeline
+
+compose-dashboard:
+	docker compose up --build dashboard

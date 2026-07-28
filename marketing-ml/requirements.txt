@@ -1,2 +1,0 @@
-# Canonical dependency list lives at the repository root.
--r ../requirements.txt

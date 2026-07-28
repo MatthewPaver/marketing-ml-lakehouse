@@ -47,7 +47,7 @@ This repository contains a local-first marketing analytics stack built around:
 | Run locally | `make install && make run` |
 | Dashboard | `make dashboard` then open `http://localhost:8501` |
 | Tests | `make test` rebuilds DuckDB/models from demo data, then runs pytest |
-| Demo data | Included under `marketing-ml/data/raw/` |
+| Demo data | Included under `data/raw/` |
 | Architecture | Raw CSVs -> DuckDB bronze/silver/gold -> XGBoost models -> data-quality checks -> Streamlit dashboard |
 | Limitations | Local-first demonstration with sample marketing data; not connected to a live ad-platform API. |
 
@@ -92,9 +92,8 @@ The project is designed to show a full local analytics workflow: ingestion, tran
 
 ## Canonical Entry Point
 
-The active implementation lives under [`lakehouse/`](lakehouse).
-
-The older [`marketing-ml/`](marketing-ml) subtree is retained as a legacy reference, but the root README, root `requirements.txt`, and root Makefile now point to the current `lakehouse/` flow.
+The implementation lives under [`lakehouse/`](lakehouse), with demo inputs in
+[`data/raw/`](data/raw) and active tests in [`tests/`](tests).
 
 ## Canonical Setup
 
@@ -139,7 +138,7 @@ The dashboard is served at `http://localhost:8501`.
 
 ## Data Expectations
 
-The current pipeline reads raw inputs from `marketing-ml/data/raw/`:
+The current pipeline reads raw inputs from `data/raw/`:
 
 - `audience_segments.csv`
 - `budget_pacing.csv`
@@ -150,7 +149,8 @@ The current pipeline reads raw inputs from `marketing-ml/data/raw/`:
 
 ```text
 lakehouse/      active pipeline, models, and dashboard
-marketing-ml/   older reference implementation
+data/raw/       small reproducible demo inputs
+tests/          active pipeline and reviewer tests
 requirements.txt
 Makefile
 ```
@@ -158,8 +158,23 @@ Makefile
 ## Notes
 
 - Root `requirements.txt` is canonical.
-- `lakehouse/requirements.txt` and `marketing-ml/requirements.txt` are compatibility shims.
+- `lakehouse/requirements.txt` is a compatibility shim for the root dependency list.
 - If you land inside the subdirectories directly, prefer coming back to the repository root for setup.
+
+## Docker Compose
+
+Run the complete pipeline in a disposable container:
+
+```bash
+make compose-pipeline
+```
+
+Or rebuild the pipeline and start the dashboard on
+`http://localhost:8501`:
+
+```bash
+make compose-dashboard
+```
 
 ## License
 
