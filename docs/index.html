@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Explore the Marketing ML Lakehouse pipeline, campaign evidence, pacing signals and model controls in a no-setup browser demo." />
+    <meta name="theme-color" content="#f2f5f1" />
+    <title>Marketing ML Lakehouse · Evidence console</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#workspace">Skip to workspace</a>
+    <header class="topbar">
+      <a class="brand" href="#overview" aria-label="Marketing ML Lakehouse home">
+        <span class="mark" aria-hidden="true">ML</span>
+        <span><strong>Marketing Lakehouse</strong><small>Evidence console</small></span>
+      </a>
+      <nav aria-label="Workspace">
+        <button class="nav-button is-active" data-route="overview">Overview</button>
+        <button class="nav-button" data-route="campaigns">Campaigns</button>
+        <button class="nav-button" data-route="pacing">Pacing lab</button>
+        <button class="nav-button" data-route="quality">Data quality</button>
+        <button class="nav-button" data-route="lineage">Lineage</button>
+      </nav>
+      <a class="source-link" href="https://github.com/MatthewPaver/marketing-ml-lakehouse">View source</a>
+    </header>
+
+    <div class="demo-note">
+      <strong>REPRODUCIBLE DEMO</strong>
+      <span>Metrics are computed from the CSV fixtures committed with the repository. No ad account is connected.</span>
+    </div>
+
+    <main id="workspace" tabindex="-1"></main>
+    <div class="toast" role="status" aria-live="polite"></div>
+
+    <footer>
+      <span>DuckDB · XGBoost · Streamlit · deterministic review agents</span>
+      <span>Sample travel marketing data · August 2024</span>
+    </footer>
+    <script src="app.js"></script>
+  </body>
+</html>

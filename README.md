@@ -17,6 +17,8 @@
 
 ![Marketing ML Lakehouse dashboard](docs/assets/dashboard.png)
 
+**[Open the no-setup evidence console](https://matthewpaver.github.io/marketing-ml-lakehouse/)** — a complete browser review of the committed campaign, pacing, quality and lineage evidence. The Python engine remains the canonical way to rebuild the lakehouse and models.
+
 ## Portfolio Quick Read
 
 | Section | Where to look |
