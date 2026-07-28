@@ -1,0 +1,23 @@
+x-lakehouse: &lakehouse
+  build:
+    context: .
+    dockerfile: lakehouse/Dockerfile
+  working_dir: /app
+  volumes:
+    - .:/app
+
+services:
+  pipeline:
+    <<: *lakehouse
+    command: python -m lakehouse.run_all
+    profiles:
+      - tools
+
+  dashboard:
+    <<: *lakehouse
+    command:
+      - bash
+      - -lc
+      - python -m lakehouse.run_all && streamlit run lakehouse/dashboard/app.py --server.port 8501 --server.address 0.0.0.0
+    ports:
+      - "8501:8501"

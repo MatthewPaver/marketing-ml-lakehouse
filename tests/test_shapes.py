@@ -5,8 +5,7 @@ import duckdb
 import json
 import numpy as np
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-REPO_ROOT = PROJECT_ROOT.parent
+REPO_ROOT = Path(__file__).resolve().parents[1]
 DB_PATH = REPO_ROOT / "lakehouse" / "lakehouse.duckdb"
 
 
