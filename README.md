@@ -24,7 +24,7 @@
 | Section | Where to look |
 |:---|:---|
 | What it solves | Turns raw marketing CSVs into a repeatable local analytics and ML workflow |
-| Quick start | [`make install`](#canonical-setup), [`make run`](#run-the-pipeline), [`make dashboard`](#run-the-dashboard) |
+| Quick start | [`DEMO.md`](DEMO.md) · [`make install`](#canonical-setup), [`make run`](#run-the-pipeline), [`make dashboard`](#run-the-dashboard) |
 | Screenshot | [Portfolio Store](https://matthewpaver.github.io/MatthewPaver/store/) |
 | Architecture | [System Shape](#system-shape) |
 | Tests | `make test` rebuilds the local lakehouse and runs validation |
