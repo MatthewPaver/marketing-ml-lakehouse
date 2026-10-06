@@ -174,7 +174,20 @@ function lineageView() {
   return `
     <section class="page-head compact"><div><p class="eyebrow">SYSTEM SHAPE</p><h1>Trace a recommendation to its row.</h1></div><p class="lede">The runnable Python project rebuilds every layer locally; this browser edition exposes the review surface.</p></section>
     <section class="lineage">${layers.map(([tag, title, description], index) => `<article><span>${tag}</span><div><strong>${title}</strong><p>${description}</p></div>${index < layers.length - 1 ? `<i aria-hidden="true">→</i>` : ""}</article>`).join("")}</section>
-    <section class="split lineage-detail"><article class="panel"><p class="eyebrow">INPUT CONTRACT</p><h2>Committed evidence</h2><ul>${evidence.contracts.sources.map((source) => `<li>${source.rows} rows · ${source.name}</li>`).join("")}</ul></article><article class="panel"><p class="eyebrow">PROVENANCE</p><h2>Generated, not hand-entered</h2><ul><li>Contract ${evidence.contracts.contract_version}</li><li>Quality status ${evidence.quality.status}</li><li>Models include dated holdout metadata</li></ul><a class="inline-link" href="https://github.com/MatthewPaver/marketing-ml-lakehouse#canonical-setup">Run the engine locally →</a></article></section>`;
+    <section class="split lineage-detail"><article class="panel"><p class="eyebrow">INPUT CONTRACT</p><h2>Committed evidence</h2><ul>${evidence.contracts.sources.map((source) => `<li>${source.rows} rows · ${source.name}</li>`).join("")}</ul></article><article class="panel"><p class="eyebrow">PROVENANCE</p><h2>Generated, not hand-entered</h2><ul><li>Contract ${evidence.contracts.contract_version}</li><li>Quality status ${evidence.quality.status}</li><li>Models include dated holdout metadata</li></ul><a class="inline-link" href="https://github.com/MatthewPaver/marketing-ml-lakehouse#canonical-setup">Run the engine locally →</a></article></section>
+    ${modelEvidence()}`;
+}
+
+function modelEvidence() {
+  const model = evidence.models?.bookings;
+  if (!model) return "";
+  const m = model.metrics;
+  const ci = (pair) => `[${pair[0].toFixed(2)}, ${pair[1].toFixed(2)}]`;
+  const overlap = m.mae_95pct_bootstrap[0] <= m.baseline_mae_95pct_bootstrap[1] && m.baseline_mae_95pct_bootstrap[0] <= m.mae_95pct_bootstrap[1];
+  return `<section class="panel" id="model-evidence"><p class="eyebrow">NEXT-DAY HOLDOUT · GENERATED ${escapeHtml(evidence.generated_at.slice(0, 10))}</p><h2>${overlap ? "No demonstrated skill over the prior-day baseline" : "Model interval separates from baseline"}</h2>
+    <ul><li>Holdout: ${model.split.test_rows} rows (${model.split.test_start} to ${model.split.test_end}), trained on ${model.split.train_rows}</li>
+    <li>Bookings MAE ${m.mae.toFixed(3)} ${ci(m.mae_95pct_bootstrap)} vs persistence baseline ${m.baseline_mae.toFixed(3)} ${ci(m.baseline_mae_95pct_bootstrap)}</li>
+    <li>Point skill ${(m.skill_over_baseline * 100).toFixed(0)}%${overlap ? ", but the 95% bootstrap intervals overlap, so this fixture cannot distinguish the model from the baseline" : ""}</li></ul></section>`;
 }
 
 function render() {

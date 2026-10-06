@@ -21,7 +21,7 @@ This is a reusable data engineering and ML template. A marketing analyst can ins
 
 ![Marketing ML Lakehouse dashboard](docs/assets/dashboard.png)
 
-**[Open the no-setup evidence console](https://matthewpaver.github.io/marketing-ml-lakehouse/)** — a complete browser review of the committed campaign, pacing, quality and lineage evidence. The Python engine remains the canonical way to rebuild the lakehouse and models.
+**[Open the no-setup evidence console](https://matthewpaver.github.io/marketing-ml-lakehouse/)** — a browser review of the campaign, pacing, quality, lineage and model-holdout evidence, read from `docs/generated/evidence.json`. GitHub Pages is rebuilt by [`.github/workflows/pages.yml`](.github/workflows/pages.yml) on every push to `main`, after the pipeline and tests pass. The Python engine remains the canonical way to rebuild the lakehouse and models.
 
 ## Portfolio Quick Read
 
@@ -130,6 +130,8 @@ The versioned expectations live in [`contracts/raw_sources.json`](contracts/raw_
 ## What the models are trying to solve
 
 At the end of a campaign day, a marketing operator needs to decide what to inspect before the next day begins. The two reference models therefore predict (a) next-day bookings and (b) next-day under-pacing risk. Their value is measured against simple persistence baselines, not against an in-sample chart. The committed CSVs are synthetic fixtures, so results prove pipeline and evaluation behaviour only; they are not evidence about a real campaign.
+
+**Limits of the committed evaluation.** The walk-forward holdout is 24 ad-set-days (4 dates × 6 ad sets, trained on 96). On that holdout the bookings model's MAE is 0.52 with a 95% bootstrap interval of [0.33, 0.73]; the prior-day persistence baseline is 0.67 [0.42, 0.92]. The intervals overlap, so the point "skill" of about 21% is not distinguishable from noise: **the fixture does not demonstrate skill over the prior-day baseline.** The under-pacing classifier is in the same position (accuracy intervals [0.79, 1.00] vs [0.71, 1.00]). Showing real skill would need a much longer history (hundreds of holdout days, ideally several walk-forward folds), a paired test on the per-row error difference rather than separate intervals, and real rather than synthetic data — for example the optional [GA4 public-data profile](docs/PUBLIC_DATASET_PROFILE.md). The figures above come from [`docs/generated/evidence.json`](docs/generated/evidence.json), which the console also reads.
 
 ## Repository Layout
 
