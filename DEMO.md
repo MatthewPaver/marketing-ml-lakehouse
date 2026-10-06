@@ -1,6 +1,6 @@
 # DEMO — Marketing ML Lakehouse
 
-One path a stranger can finish in about ten minutes. No ad account. No API keys.
+A sample-data path with no ad account or API keys. Installation time depends on your computer and connection.
 
 ## What this proves
 
@@ -15,16 +15,51 @@ It does **not** prove live campaign performance, ROAS from a connected ad platfo
 
 ## Run it
 
+Use Python 3.11 for the tested setup. Before installing the ML packages, you can check the included input files using only Python's standard library:
+
+```bash
+python3.11 -m lakehouse.contracts
+```
+
+This checks the four configured CSV sources without training a model or downloading data. It writes `lakehouse/artifacts/contract_report.json`. A `warn` result needs inspection; it is not a clean bill of health. An empty file, duplicate column name, missing required column or a row with the wrong number of fields fails before ingestion, with the source name and reason recorded in that report.
+
+### Full local workflow
+
 ```bash
 git clone https://github.com/MatthewPaver/marketing-ml-lakehouse.git
 cd marketing-ml-lakehouse
 make install
 make run          # rebuild lakehouse + train
-make dashboard    # Streamlit on http://localhost:8501
 make test         # rebuild from fixtures, then pytest
+make dashboard    # stays running at http://localhost:8501; stop with Ctrl+C
 ```
 
+### Windows / no Make
+
+From the repository root in PowerShell:
+
+```powershell
+py -3.11 -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+.venv\Scripts\python.exe -m lakehouse.run_all
+.venv\Scripts\python.exe -m pytest tests -q
+.venv\Scripts\python.exe -m streamlit run lakehouse/dashboard/app.py
+```
+
+### Where your result goes
+
+- Data checks: `lakehouse/artifacts/contract_report.json` (source names, hashes, row counts and warnings).
+- Rebuilt tables: `lakehouse/lakehouse.duckdb`, in the `bronze`, `silver` and `gold` schemas.
+- Models and evaluation files: `lakehouse/models/` and `lakehouse/artifacts/`.
+- Local dashboard: `http://localhost:8501`; stop it with Ctrl+C.
+
+Run from the repository root. If Python 3.11 is missing, install that version before the full dependency setup. If a source contract fails, fix the named input first; do not train on the remaining files. Re-running the pipeline replaces generated local tables/models and the local `docs/generated/` evidence snapshot, so keep your own source files and any results you need outside those generated folders. It does not publish them to GitHub Pages.
+
 Browser evidence console (no install): https://matthewpaver.github.io/marketing-ml-lakehouse/
+
+The browser console is a fixed demonstration snapshot, not a live view of the files you rebuild. Use the local Streamlit dashboard to inspect your current pipeline output. Do not expect local input changes to appear on the public website.
+
+**First useful result:** open the local data-quality view, inspect the duplicate campaign/day keys, then compare the next-day model with the simple baseline. A data-quality failure or a model that does not improve on the baseline is a useful finding, not a reason to hide the result.
 
 ## What to look at
 
