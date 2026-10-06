@@ -1,0 +1,33 @@
+{
+  "version": "1.0",
+  "sources": [
+    {
+      "name": "audience_segments",
+      "path": "data/raw/audience_segments.csv",
+      "required_columns": ["ad_set_id", "ad_set_name", "target_age", "target_interests", "lookalike_source", "daily_budget"],
+      "required_non_null": ["ad_set_id", "ad_set_name"],
+      "key": ["ad_set_id"]
+    },
+    {
+      "name": "budget_pacing",
+      "path": "data/raw/budget_pacing.csv",
+      "required_columns": ["date", "ad_set_id", "planned_spend", "actual_spend", "budget_utilization", "pacing_status"],
+      "required_non_null": ["date", "ad_set_id"],
+      "key": ["date", "ad_set_id"]
+    },
+    {
+      "name": "conversion_events",
+      "path": "data/raw/conversion_events.csv",
+      "required_columns": ["conversion_id", "date", "ad_set_id", "conversion_type", "value", "attribution_window", "user_segment"],
+      "required_non_null": ["conversion_id", "date", "ad_set_id", "conversion_type"],
+      "key": ["conversion_id"]
+    },
+    {
+      "name": "meta_campaign_performance",
+      "path": "data/raw/meta_campaign_performance.csv",
+      "required_columns": ["date", "ad_set_id", "ad_set_name", "impressions", "clicks", "spend", "ctr", "cpm", "frequency"],
+      "required_non_null": ["date", "ad_set_id", "ad_set_name"],
+      "key": ["date", "ad_set_id"]
+    }
+  ]
+}

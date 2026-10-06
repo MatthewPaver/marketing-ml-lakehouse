@@ -11,11 +11,11 @@ import plotly.express as px
 import plotly.graph_objects as go
 import requests
 import streamlit as st
-from sklearn.metrics import roc_auc_score, roc_curve
 
 from lakehouse.config import (
     SCHEMA_GOLD,
     TBL_GLD_DAILY_METRICS,
+    TBL_GLD_TRAINING_SET,
     MODELS_DIR,
 )
 from lakehouse.utils.db import get_connection
@@ -77,6 +77,12 @@ try:
     dq_df: pd.DataFrame = con.execute(f"SELECT * FROM {SCHEMA_GOLD}.data_quality_report").df()
 except Exception:
     dq_df = pd.DataFrame()
+try:
+    training_df: pd.DataFrame = con.execute(
+        f"SELECT * FROM {SCHEMA_GOLD}.{TBL_GLD_TRAINING_SET}"
+    ).df()
+except Exception:
+    training_df = pd.DataFrame()
 con.close()
 
 if df.empty:
@@ -258,36 +264,23 @@ with tab_models:
             fig_cimp.update_xaxes(title="Importance (%)")
             st.plotly_chart(fig_cimp, width="stretch")
 
-        st.markdown("### AUC before/after with label noise")
-        noise = st.slider("Label noise (flip % of labels)", 0.0, 0.3, 0.1, 0.01)
-        try:
-            import pickle
-            with open(clf_pkl_path, "rb") as f:
-                clf_pipe = pickle.load(f)
-            feat_cols = clf_meta.get("features", [])
-            df_score = df_f.dropna(subset=feat_cols + ["pacing_status"]).copy()
-            if not df_score.empty:
-                X = df_score[feat_cols]
-                y_true = (df_score["pacing_status"].astype(str) == "under_pacing").astype(int).values
-                proba = clf_pipe.predict_proba(X)[:, 1]
-                auc_base = roc_auc_score(y_true, proba)
-                rng = np.random.default_rng(42)
-                y_noisy = y_true.copy()
-                n_flip = int(len(y_true) * noise)
-                if n_flip > 0:
-                    idx = rng.choice(len(y_true), size=n_flip, replace=False)
-                    y_noisy[idx] = 1 - y_noisy[idx]
-                auc_noisy = roc_auc_score(y_noisy, proba)
-                fpr0, tpr0, _ = roc_curve(y_true, proba)
-                fpr1, tpr1, _ = roc_curve(y_noisy, proba)
-                roc_fig = go.Figure()
-                roc_fig.add_trace(go.Scatter(x=fpr0, y=tpr0, mode="lines", name=f"Baseline ROC (AUC {auc_base:.3f})"))
-                roc_fig.add_trace(go.Scatter(x=fpr1, y=tpr1, mode="lines", name=f"Noisy ROC (AUC {auc_noisy:.3f})"))
-                roc_fig.add_trace(go.Scatter(x=[0,1], y=[0,1], mode="lines", name="Chance", line=dict(dash="dash")))
-                roc_fig.update_layout(template=PX_TEMPLATE, title="ROC curves: baseline vs noisy labels")
-                st.plotly_chart(roc_fig, width="stretch")
-        except Exception as e:
-            st.warning(f"Could not compute AUC comparison: {e}")
+        st.markdown("### Evaluation contract")
+        st.caption(
+            "The model predicts the next calendar day's state from information available "
+            "at the end of the as-of day. Whole dates are held out, and the persisted "
+            "current state is the baseline."
+        )
+        if not training_df.empty:
+            st.dataframe(
+                training_df[[
+                    "as_of_date",
+                    "target_date",
+                    "ad_set_id",
+                    "under_pacing_asof",
+                    "target_next_day_under_pacing",
+                ]].tail(12),
+                width="stretch",
+            )
     else:
         st.info("Classification artefacts not found. Train the classifier.")
 

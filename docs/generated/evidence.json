@@ -1,0 +1,548 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-05T10:21:36.155560+00:00",
+  "campaigns": [
+    {
+      "id": "AS_001",
+      "name": "Premium_Travelers_25-45",
+      "impressions": 981730,
+      "clicks": 18981,
+      "spend": 6224.55,
+      "planned": 10500.0,
+      "revenue": 73193.75,
+      "conversions": 48,
+      "under": 21,
+      "days": 21
+    },
+    {
+      "id": "AS_002",
+      "name": "Budget_Conscious_Families",
+      "impressions": 1223130,
+      "clicks": 23184,
+      "spend": 3996.3899999999994,
+      "planned": 6300.0,
+      "revenue": 20921.75,
+      "conversions": 37,
+      "under": 18,
+      "days": 21
+    },
+    {
+      "id": "AS_003",
+      "name": "Business_Travel_Professionals",
+      "impressions": 824090,
+      "clicks": 17489,
+      "spend": 8890.73,
+      "planned": 9450.0,
+      "revenue": 55169.75,
+      "conversions": 49,
+      "under": 0,
+      "days": 21
+    },
+    {
+      "id": "AS_004",
+      "name": "Young_Adventure_Seekers",
+      "impressions": 1378860,
+      "clicks": 28092,
+      "spend": 4852.23,
+      "planned": 5250.0,
+      "revenue": 7869.5,
+      "conversions": 35,
+      "under": 0,
+      "days": 21
+    },
+    {
+      "id": "AS_005",
+      "name": "Luxury_Honeymoon_Couples",
+      "impressions": 609100,
+      "clicks": 11943,
+      "spend": 7512.6399999999985,
+      "planned": 8400.0,
+      "revenue": 156975.75,
+      "conversions": 47,
+      "under": 6,
+      "days": 21
+    },
+    {
+      "id": "AS_006",
+      "name": "Senior_Leisure_Travelers",
+      "impressions": 1013310,
+      "clicks": 18588,
+      "spend": 6371.119999999999,
+      "planned": 7350.0,
+      "revenue": 23448.25,
+      "conversions": 24,
+      "under": 3,
+      "days": 21
+    }
+  ],
+  "quality": {
+    "schema_version": 1,
+    "generated_at": "2026-09-05T10:21:35Z",
+    "status": "pass",
+    "rows": 126,
+    "checks": [
+      {
+        "name": "daily_key_unique",
+        "status": "pass",
+        "observed": 0,
+        "expected": 0
+      },
+      {
+        "name": "spend_reconciles",
+        "status": "pass",
+        "observed": 37847.65999999998,
+        "expected": 37847.65999999998,
+        "tolerance": 0.01
+      },
+      {
+        "name": "conversion_revenue_reconciles",
+        "status": "pass",
+        "observed": 337578.75,
+        "expected": 337578.75,
+        "tolerance": 0.01
+      }
+    ],
+    "column_profile": [
+      {
+        "column_name": "date",
+        "dtype": "datetime64[ns]",
+        "null_fraction": 0.0,
+        "mean": null,
+        "std": null,
+        "min": null,
+        "max": null,
+        "generated_at": "2026-09-05T10:21:35Z"
+      },
+      {
+        "column_name": "ad_set_id",
+        "dtype": "object",
+        "null_fraction": 0.0,
+        "mean": null,
+        "std": null,
+        "min": null,
+        "max": null,
+        "generated_at": "2026-09-05T10:21:35Z"
+      },
+      {
+        "column_name": "ad_set_name",
+        "dtype": "object",
+        "null_fraction": 0.0,
+        "mean": null,
+        "std": null,
+        "min": null,
+        "max": null,
+        "generated_at": "2026-09-05T10:21:35Z"
+      },
+      {
+        "column_name": "impressions",
+        "dtype": "int64",
+        "null_fraction": 0.0,
+        "mean": 47858.8888888889,
+        "std": 12833.3971323089,
+        "min": 23450.0,
+        "max": 71230.0,
+        "generated_at": "2026-09-05T10:21:35Z"
+      },
+      {
+        "column_name": "clicks",
+        "dtype": "int64",
+        "null_fraction": 0.0,
+        "mean": 938.7063492063,
+        "std": 259.4487715896,
+        "min": 445.0,
+        "max": 1456.0,
+        "generated_at": "2026-09-05T10:21:35Z"
+      },
+      {
+        "column_name": "spend",
+        "dtype": "float64",
+        "null_fraction": 0.0,
+        "mean": 300.3782539683,
+        "std": 81.3219191911,
+        "min": 167.89,
+        "max": 467.89,
+        "generated_at": "2026-09-05T10:21:35Z"
+      },
+      {
+        "column_name": "ctr",
+        "dtype": "float64",
+        "null_fraction": 0.0,
+        "mean": 1.9614996589,
+        "std": 0.1032330533,
+        "min": 1.7535774921,
+        "max": 2.2386611691,
+        "generated_at": "2026-09-05T10:21:35Z"
+      },
+      {
+        "column_name": "cpm",
+        "dtype": "float64",
+        "null_fraction": 0.0,
+        "mean": 7.0961040868,
+        "std": 3.42657299,
+        "min": 3.1323828921,
+        "max": 12.9147920927,
+        "generated_at": "2026-09-05T10:21:35Z"
+      },
+      {
+        "column_name": "frequency",
+        "dtype": "float64",
+        "null_fraction": 0.0,
+        "mean": 2.85,
+        "std": 0.6778495408,
+        "min": 1.4,
+        "max": 4.3,
+        "generated_at": "2026-09-05T10:21:35Z"
+      },
+      {
+        "column_name": "planned_spend",
+        "dtype": "float64",
+        "null_fraction": 0.0,
+        "mean": 375.0,
+        "std": 85.7321409974,
+        "min": 250.0,
+        "max": 500.0,
+        "generated_at": "2026-09-05T10:21:35Z"
+      },
+      {
+        "column_name": "actual_spend",
+        "dtype": "float64",
+        "null_fraction": 0.0,
+        "mean": 300.3782539683,
+        "std": 81.3219191911,
+        "min": 167.89,
+        "max": 467.89,
+        "generated_at": "2026-09-05T10:21:35Z"
+      },
+      {
+        "column_name": "budget_utilization",
+        "dtype": "float64",
+        "null_fraction": 0.0,
+        "mean": 0.8087301587,
+        "std": 0.1557587063,
+        "min": 0.49,
+        "max": 1.04,
+        "generated_at": "2026-09-05T10:21:35Z"
+      },
+      {
+        "column_name": "pacing_status",
+        "dtype": "object",
+        "null_fraction": 0.0,
+        "mean": null,
+        "std": null,
+        "min": null,
+        "max": null,
+        "generated_at": "2026-09-05T10:21:35Z"
+      },
+      {
+        "column_name": "revenue",
+        "dtype": "float64",
+        "null_fraction": 0.0,
+        "mean": 2679.1964285714,
+        "std": 2641.2062094064,
+        "min": 234.25,
+        "max": 11914.5,
+        "generated_at": "2026-09-05T10:21:35Z"
+      },
+      {
+        "column_name": "bookings",
+        "dtype": "int64",
+        "null_fraction": 0.0,
+        "mean": 1.9047619048,
+        "std": 0.7841282694,
+        "min": 1.0,
+        "max": 4.0,
+        "generated_at": "2026-09-05T10:21:35Z"
+      },
+      {
+        "column_name": "soft_conversions",
+        "dtype": "int64",
+        "null_fraction": 0.0,
+        "mean": 0.626984127,
+        "std": 0.7454837569,
+        "min": 0.0,
+        "max": 3.0,
+        "generated_at": "2026-09-05T10:21:35Z"
+      },
+      {
+        "column_name": "roas",
+        "dtype": "float64",
+        "null_fraction": 0.0,
+        "mean": 8.3236456555,
+        "std": 7.6022668675,
+        "min": 1.0572166057,
+        "max": 41.1470933849,
+        "generated_at": "2026-09-05T10:21:35Z"
+      },
+      {
+        "column_name": "cpa",
+        "dtype": "float64",
+        "null_fraction": 0.0,
+        "mean": 179.7121891534,
+        "std": 72.7076931009,
+        "min": 55.9633333333,
+        "max": 378.92,
+        "generated_at": "2026-09-05T10:21:35Z"
+      }
+    ],
+    "provenance": {
+      "contract_report_sha256": "a5b97adbaf9bb78b5107bf373ab76b17b9a4a4df57c66dbe3f613a0c5164cd2a"
+    }
+  },
+  "contracts": {
+    "contract_version": "1.0",
+    "generated_at": "2026-09-05T10:21:35.624708+00:00",
+    "status": "warn",
+    "sources": [
+      {
+        "name": "audience_segments",
+        "path": "data/raw/audience_segments.csv",
+        "status": "pass",
+        "rows": 6,
+        "columns": [
+          "ad_set_id",
+          "ad_set_name",
+          "target_age",
+          "target_interests",
+          "lookalike_source",
+          "daily_budget"
+        ],
+        "key": [
+          "ad_set_id"
+        ],
+        "sha256": "a7e3515390d758dd82fd4c53d78533cd3d22a7698ff00ac2e1730f9e7d6a7d88",
+        "fatal": [],
+        "warnings": []
+      },
+      {
+        "name": "budget_pacing",
+        "path": "data/raw/budget_pacing.csv",
+        "status": "pass",
+        "rows": 126,
+        "columns": [
+          "date",
+          "ad_set_id",
+          "planned_spend",
+          "actual_spend",
+          "budget_utilization",
+          "pacing_status"
+        ],
+        "key": [
+          "date",
+          "ad_set_id"
+        ],
+        "sha256": "5bbb469257dda9b533e983bd15b9cabbabfe22dcd0f48db9fff982db41cdbfb1",
+        "fatal": [],
+        "warnings": []
+      },
+      {
+        "name": "conversion_events",
+        "path": "data/raw/conversion_events.csv",
+        "status": "pass",
+        "rows": 319,
+        "columns": [
+          "conversion_id",
+          "date",
+          "ad_set_id",
+          "conversion_type",
+          "value",
+          "attribution_window",
+          "user_segment"
+        ],
+        "key": [
+          "conversion_id"
+        ],
+        "sha256": "7d8377b16a29344ca7c927002d1480a317eb9f37dd6a5ca22d7858e98c8c3baf",
+        "fatal": [],
+        "warnings": []
+      },
+      {
+        "name": "meta_campaign_performance",
+        "path": "data/raw/meta_campaign_performance.csv",
+        "status": "warn",
+        "rows": 131,
+        "columns": [
+          "date",
+          "ad_set_id",
+          "ad_set_name",
+          "impressions",
+          "clicks",
+          "spend",
+          "ctr",
+          "cpm",
+          "frequency"
+        ],
+        "key": [
+          "date",
+          "ad_set_id"
+        ],
+        "sha256": "32d3a6c6a5381cbfe71f175aa1485cb9a56718cadd3b9837ddfc1a7c8cc64ff4",
+        "fatal": [],
+        "warnings": [
+          "duplicate_key_rows:5"
+        ]
+      }
+    ]
+  },
+  "models": {
+    "bookings": {
+      "model": "XGBRegressor",
+      "target": "target_next_day_bookings",
+      "prediction_contract": {
+        "as_of": "end of as_of_date",
+        "horizon": "next calendar day",
+        "unit": "ad set x day"
+      },
+      "features": [
+        "impressions_asof",
+        "clicks_asof",
+        "spend_asof",
+        "ctr_asof",
+        "cpm_asof",
+        "frequency_asof",
+        "planned_spend_asof",
+        "actual_spend_asof",
+        "budget_utilization_asof",
+        "pacing_status_asof",
+        "soft_conversions_asof",
+        "revenue_asof",
+        "bookings_asof",
+        "bookings_trailing_3d",
+        "bookings_trailing_7d",
+        "budget_utilization_trailing_7d"
+      ],
+      "importances": [
+        0.019838731735944748,
+        0.019031204283237457,
+        0.020677709951996803,
+        0.018766753375530243,
+        0.023807581514120102,
+        0.02757890522480011,
+        0.6166689991950989,
+        0.008096875622868538,
+        0.022311219945549965,
+        0.004984249360859394,
+        0.03068034164607525,
+        0.05634888634085655,
+        0.035593900829553604,
+        0.015329303219914436,
+        0.05217791721224785,
+        0.028107427060604095
+      ],
+      "baseline": "persistence: bookings_asof",
+      "metrics": {
+        "mae": 0.5249127596616745,
+        "mae_95pct_bootstrap": [
+          0.3302381856987874,
+          0.7329582671324412
+        ],
+        "baseline_mae": 0.6666666666666666,
+        "baseline_mae_95pct_bootstrap": [
+          0.4166666666666667,
+          0.9166666666666666
+        ],
+        "skill_over_baseline": 0.21263086050748825
+      },
+      "split": {
+        "strategy": "walk-forward holdout by unique as-of date",
+        "train_rows": 96,
+        "test_rows": 24,
+        "train_start": "2024-08-01",
+        "train_end": "2024-08-16",
+        "test_start": "2024-08-17",
+        "test_end": "2024-08-20",
+        "dates_disjoint": true
+      },
+      "leakage_checks": {
+        "target_date_after_as_of_date": true,
+        "target_columns_excluded": true,
+        "dates_disjoint": true
+      }
+    },
+    "underpacing": {
+      "model": "XGBClassifier",
+      "target": "target_next_day_under_pacing",
+      "prediction_contract": {
+        "as_of": "end of as_of_date",
+        "horizon": "next calendar day",
+        "unit": "ad set x day"
+      },
+      "baseline": "persistence: under_pacing_asof",
+      "metrics": {
+        "balanced_accuracy": 0.9090909090909092,
+        "f1": 0.9,
+        "auc": 0.972027972027972,
+        "baseline_balanced_accuracy": 0.8706293706293706,
+        "baseline_f1": 0.8571428571428571,
+        "positive_prevalence": 0.4583333333333333,
+        "accuracy_95pct_bootstrap": [
+          0.7916666666666666,
+          1.0
+        ],
+        "baseline_accuracy_95pct_bootstrap": [
+          0.7083333333333334,
+          1.0
+        ]
+      },
+      "features": [
+        "impressions_asof",
+        "clicks_asof",
+        "spend_asof",
+        "ctr_asof",
+        "cpm_asof",
+        "frequency_asof",
+        "planned_spend_asof",
+        "actual_spend_asof",
+        "budget_utilization_asof",
+        "pacing_status_asof",
+        "under_pacing_asof",
+        "soft_conversions_asof",
+        "revenue_asof",
+        "bookings_asof",
+        "bookings_trailing_3d",
+        "bookings_trailing_7d",
+        "budget_utilization_trailing_7d"
+      ],
+      "importances": [
+        0.042998407036066055,
+        0.028538156300783157,
+        0.0468565933406353,
+        0.036997344344854355,
+        0.05158217251300812,
+        0.03584017604589462,
+        0.07849162071943283,
+        0.01587417535483837,
+        0.3656959533691406,
+        0.0,
+        0.0,
+        0.04565223678946495,
+        0.053387273102998734,
+        0.043936531990766525,
+        0.021938981488347054,
+        0.03363896533846855,
+        0.09857142716646194
+      ],
+      "split": {
+        "strategy": "walk-forward holdout by unique as-of date",
+        "train_rows": 96,
+        "test_rows": 24,
+        "train_start": "2024-08-01",
+        "train_end": "2024-08-16",
+        "test_start": "2024-08-17",
+        "test_end": "2024-08-20",
+        "dates_disjoint": true
+      },
+      "leakage_checks": {
+        "target_date_after_as_of_date": true,
+        "target_columns_excluded": true,
+        "dates_disjoint": true
+      }
+    }
+  },
+  "provenance": {
+    "generator": "lakehouse.publish_pages",
+    "quality_report_sha256": "3e94d89d47d102fc87b4be3e3e1a77e4ed1200164edc05f926ad885f8955f1b2",
+    "contract_report_sha256": "a5b97adbaf9bb78b5107bf373ab76b17b9a4a4df57c66dbe3f613a0c5164cd2a",
+    "bookings_model_sha256": "6d9d62959a93cf494b58d440427ee94ba525f560dc5ee6f0a5f612d4e35a75c7",
+    "underpacing_model_sha256": "fc1765ed62ee4f5cb64c74b623e001ff50b0e4336257305295383b095df41f84"
+  }
+}

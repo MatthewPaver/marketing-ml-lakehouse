@@ -5,7 +5,7 @@ VENV=.venv
 PYTHON=$(VENV)/bin/python
 PIPBIN=$(VENV)/bin/pip
 
-.PHONY: venv install run dashboard train-clf test docker-build docker-run-pipeline docker-run-dashboard compose-pipeline compose-dashboard
+.PHONY: venv install contract run pages dashboard train-clf ga4-profile test docker-build docker-run-pipeline docker-run-dashboard compose-pipeline compose-dashboard
 
 venv:
 	$(BOOTSTRAP_PYTHON) -m venv $(VENV)
@@ -14,11 +14,21 @@ venv:
 install: venv
 	$(PIPBIN) install -r requirements.txt
 
+contract:
+	$(PYTHON) -m lakehouse.contracts
+
 run:
 	$(PYTHON) -m lakehouse.run_all
 
+pages:
+	$(PYTHON) -m lakehouse.publish_pages
+
 train-clf:
 	$(PYTHON) -m lakehouse.ml.train_underpacing
+
+ga4-profile:
+	@test -n "$(INPUT)" || (echo "Usage: make ga4-profile INPUT=data/public/ga4/export.parquet" && exit 2)
+	$(PYTHON) -m lakehouse.public_data.ga4 "$(INPUT)"
 
 dashboard:
 	PYTHONPATH=$(PWD) $(VENV)/bin/streamlit run lakehouse/dashboard/app.py

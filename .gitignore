@@ -49,3 +49,7 @@ logs/
 *.duckdb
 **/lakehouse.duckdb
 lakehouse/models/
+lakehouse/artifacts/
+data/public/ga4/derived/
+data/public/ga4/*.csv
+data/public/ga4/*.parquet

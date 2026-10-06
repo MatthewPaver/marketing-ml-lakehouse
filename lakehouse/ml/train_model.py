@@ -1,7 +1,8 @@
-"""Model training on gold training set using XGBoost in an sklearn Pipeline.
+"""Prospective next-day bookings model using XGBoost.
 
-- Target: daily bookings (`target_bookings`)
-- Features: performance, budget, pacing index, soft conversions, revenue
+- Decision point: end of ``as_of_date``
+- Target: bookings on ``target_date`` (the next calendar day)
+- Baseline: today's bookings persist into tomorrow
 - Artefacts: pickled pipeline + metrics JSON under `lakehouse/models/`
 """
 
@@ -13,7 +14,7 @@ import pickle
 import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
-from sklearn.metrics import mean_absolute_error, r2_score
+from sklearn.metrics import mean_absolute_error
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBRegressor
@@ -25,6 +26,12 @@ from lakehouse.config import (
     RANDOM_SEED,
 )
 from lakehouse.utils.db import get_connection, ensure_schemas
+from lakehouse.ml.validation import (
+    assert_prospective_features,
+    bootstrap_interval,
+    split_by_date,
+    split_metadata,
+)
 
 
 def load_training_dataframe() -> pd.DataFrame:
@@ -37,11 +44,7 @@ def load_training_dataframe() -> pd.DataFrame:
 
 
 def time_based_split(df: pd.DataFrame, test_fraction: float = 0.2):
-    df_sorted = df.sort_values("date")
-    split_idx = int(len(df_sorted) * (1 - test_fraction))
-    train_df = df_sorted.iloc[:split_idx]
-    test_df = df_sorted.iloc[split_idx:]
-    return train_df, test_df
+    return split_by_date(df, test_fraction=test_fraction)
 
 
 def train() -> dict:
@@ -50,21 +53,26 @@ def train() -> dict:
 
     df = load_training_dataframe()
 
-    target_col = "target_bookings"
+    target_col = "target_next_day_bookings"
     feature_cols = [
-        "impressions",
-        "clicks",
-        "spend",
-        "ctr",
-        "cpm",
-        "frequency",
-        "planned_spend",
-        "actual_spend",
-        "budget_utilization",
-        "pacing_status_idx",
-        "soft_conversions",
-        "revenue",
+        "impressions_asof",
+        "clicks_asof",
+        "spend_asof",
+        "ctr_asof",
+        "cpm_asof",
+        "frequency_asof",
+        "planned_spend_asof",
+        "actual_spend_asof",
+        "budget_utilization_asof",
+        "pacing_status_asof",
+        "soft_conversions_asof",
+        "revenue_asof",
+        "bookings_asof",
+        "bookings_trailing_3d",
+        "bookings_trailing_7d",
+        "budget_utilization_trailing_7d",
     ]
+    assert_prospective_features(feature_cols)
 
     if df.empty:
         raise RuntimeError("Training set is empty. Ensure gold transformations have run.")
@@ -105,7 +113,9 @@ def train() -> dict:
 
     preds = pipeline.predict(X_test)
     mae = mean_absolute_error(y_test, preds)
-    r2 = r2_score(y_test, preds)
+    baseline_preds = X_test["bookings_asof"].astype(float)
+    baseline_mae = mean_absolute_error(y_test, baseline_preds)
+    skill_over_baseline = None if baseline_mae == 0 else 1 - (mae / baseline_mae)
 
     artefact_prefix = MODELS_DIR / "bookings_xgb"
     with open(f"{artefact_prefix}.pkl", "wb") as f:
@@ -116,9 +126,27 @@ def train() -> dict:
     meta = {
         "model": "XGBRegressor",
         "target": target_col,
+        "prediction_contract": {
+            "as_of": "end of as_of_date",
+            "horizon": "next calendar day",
+            "unit": "ad set x day",
+        },
         "features": feature_cols,
         "importances": importances,
-        "metrics": {"mae": float(mae), "r2": float(r2)},
+        "baseline": "persistence: bookings_asof",
+        "metrics": {
+            "mae": float(mae),
+            "mae_95pct_bootstrap": bootstrap_interval(abs(y_test.to_numpy() - preds)),
+            "baseline_mae": float(baseline_mae),
+            "baseline_mae_95pct_bootstrap": bootstrap_interval(abs(y_test.to_numpy() - baseline_preds.to_numpy())),
+            "skill_over_baseline": None if skill_over_baseline is None else float(skill_over_baseline),
+        },
+        "split": split_metadata(train_df, test_df),
+        "leakage_checks": {
+            "target_date_after_as_of_date": bool((pd.to_datetime(df["target_date"]) > pd.to_datetime(df["as_of_date"])).all()),
+            "target_columns_excluded": True,
+            "dates_disjoint": True,
+        },
     }
     with open(f"{artefact_prefix}.json", "w", encoding="utf-8") as f:
         json.dump(meta, f, indent=2)

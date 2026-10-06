@@ -90,33 +90,61 @@ def transform() -> None:
         """
     )
 
-    # Training set for supervised learning
+    # Prospective training set.  Every feature is known at the end of
+    # ``as_of_date``; both targets describe the following calendar day.  The
+    # explicit target date makes the prediction horizon testable rather than a
+    # convention hidden in model code.
     con.execute(
         f"""
         CREATE OR REPLACE TABLE {SCHEMA_GOLD}.{TBL_GLD_TRAINING_SET} AS
+        WITH sequenced AS (
+            SELECT
+                date AS as_of_date,
+                LEAD(date) OVER (PARTITION BY ad_set_id ORDER BY date) AS target_date,
+                ad_set_id,
+                ad_set_name,
+                impressions AS impressions_asof,
+                clicks AS clicks_asof,
+                spend AS spend_asof,
+                ctr AS ctr_asof,
+                cpm AS cpm_asof,
+                frequency AS frequency_asof,
+                planned_spend AS planned_spend_asof,
+                actual_spend AS actual_spend_asof,
+                budget_utilization AS budget_utilization_asof,
+                CASE pacing_status
+                    WHEN 'under_pacing' THEN 0
+                    WHEN 'on_pace' THEN 1
+                    WHEN 'over_pacing' THEN 2
+                    ELSE 3
+                END AS pacing_status_asof,
+                CASE WHEN pacing_status = 'under_pacing' THEN 1 ELSE 0 END AS under_pacing_asof,
+                soft_conversions AS soft_conversions_asof,
+                revenue AS revenue_asof,
+                bookings AS bookings_asof,
+                AVG(bookings) OVER (
+                    PARTITION BY ad_set_id ORDER BY date
+                    ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+                ) AS bookings_trailing_3d,
+                AVG(bookings) OVER (
+                    PARTITION BY ad_set_id ORDER BY date
+                    ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+                ) AS bookings_trailing_7d,
+                AVG(budget_utilization) OVER (
+                    PARTITION BY ad_set_id ORDER BY date
+                    ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+                ) AS budget_utilization_trailing_7d,
+                LEAD(bookings) OVER (PARTITION BY ad_set_id ORDER BY date) AS target_next_day_bookings,
+                LEAD(CASE WHEN pacing_status = 'under_pacing' THEN 1 ELSE 0 END)
+                    OVER (PARTITION BY ad_set_id ORDER BY date) AS target_next_day_under_pacing
+            FROM {SCHEMA_GOLD}.{TBL_GLD_DAILY_METRICS}
+        )
         SELECT
-            date,
-            ad_set_id,
-            ad_set_name,
-            impressions,
-            clicks,
-            spend,
-            ctr,
-            cpm,
-            frequency,
-            planned_spend,
-            actual_spend,
-            budget_utilization,
-            CASE pacing_status
-                WHEN 'under_pacing' THEN 0
-                WHEN 'on_pace' THEN 1
-                WHEN 'over_pacing' THEN 2
-                ELSE 3
-            END AS pacing_status_idx,
-            soft_conversions,
-            COALESCE(revenue, 0.0) AS revenue,
-            COALESCE(bookings, 0) AS target_bookings
-        FROM {SCHEMA_GOLD}.{TBL_GLD_DAILY_METRICS};
+            *
+        FROM sequenced
+        WHERE target_date IS NOT NULL
+          AND date_diff('day', as_of_date, target_date) = 1
+        ORDER BY as_of_date, ad_set_id;
         """
     )
 

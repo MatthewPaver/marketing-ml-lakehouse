@@ -1,8 +1,8 @@
-"""Classification model for under-pacing risk.
+"""Prospective classification model for next-day under-pacing risk.
 
-- Label: 1 if pacing_status == 'under_pacing', else 0
-- Features: non-leaky numeric features (exclude planned/actual/budget_utilization)
-- Time-based split (train early dates, test later dates)
+- Decision point: end of ``as_of_date``
+- Label: next calendar day's under-pacing state
+- Baseline: today's state persists into tomorrow
 - Artefacts: pickled pipeline + metrics/metadata JSON under `lakehouse/models/`
 """
 
@@ -14,32 +14,31 @@ import pickle
 import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
-from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
+from sklearn.metrics import balanced_accuracy_score, f1_score, roc_auc_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
 
 from lakehouse.config import (
     SCHEMA_GOLD,
-    TBL_GLD_DAILY_METRICS,
+    TBL_GLD_TRAINING_SET,
     MODELS_DIR,
     RANDOM_SEED,
 )
 from lakehouse.utils.db import get_connection, ensure_schemas
+from lakehouse.ml.validation import assert_prospective_features, bootstrap_interval, split_by_date, split_metadata
 
 
 def load_dataframe() -> pd.DataFrame:
     con = get_connection()
     ensure_schemas(con)
-    df = con.execute(f"SELECT * FROM {SCHEMA_GOLD}.{TBL_GLD_DAILY_METRICS}").df()
+    df = con.execute(f"SELECT * FROM {SCHEMA_GOLD}.{TBL_GLD_TRAINING_SET}").df()
     con.close()
     return df
 
 
 def time_based_split(df: pd.DataFrame, test_fraction: float = 0.2):
-    df_sorted = df.sort_values("date")
-    split_idx = int(len(df_sorted) * (1 - test_fraction))
-    return df_sorted.iloc[:split_idx], df_sorted.iloc[split_idx:]
+    return split_by_date(df, test_fraction=test_fraction)
 
 
 def train() -> dict:
@@ -49,20 +48,27 @@ def train() -> dict:
     if df.empty:
         raise RuntimeError("Gold metrics empty. Run transforms first.")
 
-    df["label_under_pacing"] = (df["pacing_status"].astype(str) == "under_pacing").astype(int)
-
-    # Non-leaky features: exclude planned_spend, actual_spend, budget_utilization
     feature_cols = [
-        "impressions",
-        "clicks",
-        "spend",
-        "ctr",
-        "cpm",
-        "frequency",
-        "soft_conversions",
-        "revenue",
+        "impressions_asof",
+        "clicks_asof",
+        "spend_asof",
+        "ctr_asof",
+        "cpm_asof",
+        "frequency_asof",
+        "planned_spend_asof",
+        "actual_spend_asof",
+        "budget_utilization_asof",
+        "pacing_status_asof",
+        "under_pacing_asof",
+        "soft_conversions_asof",
+        "revenue_asof",
+        "bookings_asof",
+        "bookings_trailing_3d",
+        "bookings_trailing_7d",
+        "budget_utilization_trailing_7d",
     ]
-    target_col = "label_under_pacing"
+    target_col = "target_next_day_under_pacing"
+    assert_prospective_features(feature_cols)
 
     train_df, test_df = time_based_split(df, test_fraction=0.2)
     X_train = train_df[feature_cols]
@@ -98,10 +104,17 @@ def train() -> dict:
     proba = pipeline.predict_proba(X_test)[:, 1]
     preds = (proba >= 0.5).astype(int)
 
+    baseline_preds = X_test["under_pacing_asof"].astype(int)
+    auc = float(roc_auc_score(y_test, proba)) if y_test.nunique() > 1 else None
     metrics = {
-        "accuracy": float(accuracy_score(y_test, preds)),
-        "f1": float(f1_score(y_test, preds)),
-        "auc": float(roc_auc_score(y_test, proba)),
+        "balanced_accuracy": float(balanced_accuracy_score(y_test, preds)),
+        "f1": float(f1_score(y_test, preds, zero_division=0)),
+        "auc": auc,
+        "baseline_balanced_accuracy": float(balanced_accuracy_score(y_test, baseline_preds)),
+        "baseline_f1": float(f1_score(y_test, baseline_preds, zero_division=0)),
+        "positive_prevalence": float(y_test.mean()),
+        "accuracy_95pct_bootstrap": bootstrap_interval((preds == y_test.to_numpy()).astype(float)),
+        "baseline_accuracy_95pct_bootstrap": bootstrap_interval((baseline_preds.to_numpy() == y_test.to_numpy()).astype(float)),
     }
 
     # Persist artefacts
@@ -113,7 +126,29 @@ def train() -> dict:
     importances = pipeline.named_steps["model"].feature_importances_.tolist()
 
     with open(f"{artefact_prefix}.json", "w", encoding="utf-8") as f:
-        json.dump({"metrics": metrics, "features": feature_cols, "importances": importances}, f, indent=2)
+        json.dump(
+            {
+                "model": "XGBClassifier",
+                "target": target_col,
+                "prediction_contract": {
+                    "as_of": "end of as_of_date",
+                    "horizon": "next calendar day",
+                    "unit": "ad set x day",
+                },
+                "baseline": "persistence: under_pacing_asof",
+                "metrics": metrics,
+                "features": feature_cols,
+                "importances": importances,
+                "split": split_metadata(train_df, test_df),
+                "leakage_checks": {
+                    "target_date_after_as_of_date": bool((pd.to_datetime(df["target_date"]) > pd.to_datetime(df["as_of_date"])).all()),
+                    "target_columns_excluded": True,
+                    "dates_disjoint": True,
+                },
+            },
+            f,
+            indent=2,
+        )
 
     return metrics
 
