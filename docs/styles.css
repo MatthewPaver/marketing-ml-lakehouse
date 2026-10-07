@@ -83,12 +83,12 @@ h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 27px;
 .toolbar label, .range-label { display: flex; flex-direction: column; gap: 7px; color: var(--muted); font-size: 11px; font-weight: 700; }
 .toolbar input, .toolbar select { min-height: 48px; padding: 0 14px; border: 1px solid var(--line); border-radius: 9px; color: var(--ink); background: white; }
 .campaign-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-.campaign-card { padding: 22px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.campaign-card { min-width: 0; padding: 22px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
 .campaign-card header { display: flex; justify-content: space-between; align-items: center; }
 .campaign-id { color: var(--muted); font: 700 10px ui-monospace, monospace; }
 .health { padding: 5px 8px; border-radius: 20px; color: var(--accent); background: var(--accent-soft); font-size: 10px; font-weight: 800; }
 .health.risk { color: #9a461f; background: #ffeadc; }
-.campaign-card h2 { margin-top: 27px; }
+.campaign-card h2 { margin-top: 27px; overflow-wrap: anywhere; }
 .campaign-card > p { min-height: 42px; margin: 7px 0 22px; color: var(--muted); font-size: 13px; }
 .campaign-kpis { display: grid; grid-template-columns: repeat(3, 1fr); border-block: 1px solid var(--line); }
 .campaign-kpis div { padding: 15px 8px 15px 0; }
