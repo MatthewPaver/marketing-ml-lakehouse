@@ -4,12 +4,12 @@ from playwright.sync_api import sync_playwright
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SCREENSHOT = ROOT / "docs" / "showcase.png"
+SCREENSHOT = ROOT / "docs" / "assets" / "console.png"
 
 
 with sync_playwright() as playwright:
     browser = playwright.chromium.launch(headless=True)
-    page = browser.new_page(viewport={"width": 1200, "height": 675})
+    page = browser.new_page(viewport={"width": 1280, "height": 800})
     page.goto("http://127.0.0.1:8766", wait_until="networkidle")
     assert "Evidence console" in page.title()
     assert page.get_by_text("Spend has a pacing problem").is_visible()

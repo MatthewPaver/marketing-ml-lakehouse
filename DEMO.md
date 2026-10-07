@@ -61,20 +61,8 @@ The browser console is a fixed demonstration snapshot, not a live view of the fi
 
 **First useful result:** open the local data-quality view, inspect the duplicate campaign/day keys, then compare the next-day model with the simple baseline. A data-quality failure or a model that does not improve on the baseline is a useful finding, not a reason to hide the result.
 
-## What to look at
-
-| Surface | Why it matters |
-| --- | --- |
-| Gold tables in DuckDB | The medallion path is inspectable, not a notebook side-effect |
-| Dashboard pacing / ROAS panels | Metrics come from committed CSVs — labelled as demo |
-| `make test` | CI rebuilds the same artefacts a recruiter can reproduce |
-
 ## Boundaries
 
 - Demo data under `data/raw/` (August 2024 sample travel marketing).
 - Browser console reviews aggregates; full DuckDB rebuild and training run locally.
 - Canonical path is the root Makefile + `lakehouse/` package (legacy `marketing-ml/` tree removed).
-
-## For the portfolio conversation
-
-Useful talking point: “analytics demos often stop at a chart; this one packages ingestion, quality gates, training and a dashboard as one rebuildable loop.”

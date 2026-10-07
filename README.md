@@ -19,7 +19,7 @@ This is a reusable data engineering and ML template. A marketing analyst can ins
 
 ---
 
-![Marketing ML Lakehouse dashboard](docs/assets/dashboard.png)
+![Marketing ML Lakehouse evidence console](docs/assets/console.png)
 
 **[Open the no-setup evidence console](https://matthewpaver.github.io/marketing-ml-lakehouse/)** — a browser review of the campaign, pacing, quality, lineage and model-holdout evidence, read from `docs/generated/evidence.json`. GitHub Pages is rebuilt by [`.github/workflows/pages.yml`](.github/workflows/pages.yml) on every push to `main`, after the pipeline and tests pass. The Python engine remains the canonical way to rebuild the lakehouse and models.
 
