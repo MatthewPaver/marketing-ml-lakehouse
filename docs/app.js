@@ -47,18 +47,18 @@ function overview() {
   const atRisk = campaigns.filter((item) => item.under > 10);
   return `
     <section class="page-head">
-      <div><p class="eyebrow">EXECUTIVE REVIEW · 22-DAY SNAPSHOT</p><h1>Spend has a pacing problem,<br />not a revenue problem.</h1></div>
-      <p class="lede">The lakehouse connects raw delivery, conversion value and pacing evidence before a campaign recommendation reaches an operator.</p>
+      <div><p class="eyebrow">SAMPLE DATA · ${campaigns[0].days} DAYS</p><h1>Spend, revenue and pacing for six sample campaigns</h1></div>
+      <p class="lede">The pipeline joins the delivery, conversion and pacing CSV files committed to the repository. Every figure on this page comes from those fixtures.</p>
     </section>
     <section class="metric-grid">
-      ${metric("Attributed revenue", money(totals.revenue), `${totals.conversions} committed conversion rows`, "positive")}
+      ${metric("Attributed revenue", money(totals.revenue), `${totals.conversions} conversion rows in the fixtures`, "positive")}
       ${metric("Recorded spend", money(totals.spend), `${number(totals.impressions)} impressions`)}
-      ${metric("Blended ROAS", `${blendedRoas.toFixed(2)}×`, "Revenue divided by recorded spend", "positive")}
+      ${metric("Blended ROAS · fixture", `${blendedRoas.toFixed(2)}×`, "Fixture revenue divided by fixture spend", "positive")}
       ${metric("Pacing watchlist", String(atRisk.length), "Campaigns under pace on >10 days", "warning")}
     </section>
     <section class="split">
       <article class="panel action-panel">
-        <header><div><p class="eyebrow">OPERATOR QUEUE</p><h2>What needs a decision</h2></div><span class="count">${atRisk.length + 1}</span></header>
+        <header><div><h2>Campaigns to review</h2></div><span class="count">${atRisk.length + 1}</span></header>
         ${atRisk.map((item, index) => `
           <button class="action-row" data-open-campaign="${item.id}">
             <span class="priority">${String(index + 1).padStart(2, "0")}</span>
@@ -67,12 +67,12 @@ function overview() {
           </button>`).join("")}
         <button class="action-row" data-route-link="campaigns">
           <span class="priority">03</span>
-          <span><strong>Adventure Seekers</strong><small>Highest reach, but only ${campaigns[3].roas.toFixed(2)}× ROAS</small></span>
+          <span><strong>Adventure Seekers</strong><small>Most impressions and the lowest ROAS (${campaigns[3].roas.toFixed(2)}×)</small></span>
           <span class="action-value">${money(campaigns[3].spend)}<small>spend</small></span>
         </button>
       </article>
       <article class="panel">
-        <header><div><p class="eyebrow">VALUE CONCENTRATION</p><h2>Revenue by audience</h2></div><span class="stamp">CSV snapshot</span></header>
+        <header><div><h2>Revenue by audience</h2></div><span class="stamp">Fixture data</span></header>
         <div class="bars">
           ${[...campaigns].sort((a, b) => b.revenue - a.revenue).map((item) => `
             <div class="bar-row"><span>${item.name}</span><div><i style="width:${(item.revenue / Math.max(...campaigns.map((row) => row.revenue))) * 100}%"></i></div><strong>${money(item.revenue)}</strong></div>
@@ -81,8 +81,8 @@ function overview() {
       </article>
     </section>
     <section class="decision-strip">
-      <div><p class="eyebrow">REVIEWER VERDICT</p><strong>Reallocate only after pacing and attribution checks.</strong></div>
-      <p>Honeymoon Couples contributes 46% of attributed value. Premium Travelers is materially under pace. The demo keeps those facts separate from the recommendation.</p>
+      <div><strong>Check pacing and attribution before you move budget.</strong></div>
+      <p>In the fixture data, Luxury Honeymoon Couples brings in 46% of attributed revenue and Premium Travelers ran under pace on ${campaigns[0].under} of ${campaigns[0].days} days.</p>
       <button data-route-link="pacing">Open pacing lab →</button>
     </section>`;
 }
@@ -94,8 +94,8 @@ function campaignsView() {
     .sort((a, b) => state.sort === "roas" ? b.roas - a.roas : state.sort === "spend" ? b.spend - a.spend : b.conversions - a.conversions);
   return `
     <section class="page-head compact">
-      <div><p class="eyebrow">GOLD · CAMPAIGN PERFORMANCE</p><h1>Compare the six audience strategies.</h1></div>
-      <p class="lede">Every value traces back to the committed performance and conversion fixtures.</p>
+      <div><p class="eyebrow">GOLD LAYER</p><h1>Six sample campaigns by audience</h1></div>
+      <p class="lede">Values come from the committed performance and conversion fixtures.</p>
     </section>
     <section class="toolbar">
       <label><span>Search campaigns</span><input id="campaign-search" value="${escapeHtml(state.campaignQuery)}" placeholder="Audience or segment" /></label>
@@ -104,7 +104,7 @@ function campaignsView() {
     <section class="campaign-grid">
       ${rows.map((item) => `
         <article class="campaign-card">
-          <header><span class="campaign-id">${item.id}</span><span class="health ${item.roas < 2 ? "risk" : ""}">${item.roas < 2 ? "Review" : "Healthy"}</span></header>
+          <header><span class="campaign-id">${item.id}</span><span class="health ${item.roas < 2 ? "risk" : ""}">${item.roas < 2 ? "ROAS below 2×" : "ROAS 2× or more"}</span></header>
           <h2>${item.name}</h2><p>${item.audience}</p>
           <div class="campaign-kpis"><div><span>ROAS</span><strong>${item.roas.toFixed(2)}×</strong></div><div><span>CTR</span><strong>${pct(item.ctr)}</strong></div><div><span>CPA</span><strong>${money(item.cpa)}</strong></div></div>
           <div class="spend-line"><span>Spend ${money(item.spend)}</span><span>Revenue ${money(item.revenue)}</span></div>
@@ -120,12 +120,12 @@ function pacingView() {
   const guardedReturn = extra * source.roas * 0.7;
   return `
     <section class="page-head compact">
-      <div><p class="eyebrow">DECISION SANDBOX</p><h1>Test a budget move before making it.</h1></div>
-      <p class="lede">A transparent scenario, not an automated spend instruction.</p>
+      <div><p class="eyebrow">SCENARIO</p><h1>Try a budget change before you make it</h1></div>
+      <p class="lede">The calculation uses the assumptions listed below. It does not change any budget.</p>
     </section>
     <section class="scenario-layout">
       <article class="panel control-panel">
-        <p class="eyebrow">SCENARIO INPUT</p><h2>Recover Premium Travelers pacing</h2>
+        <h2>Premium Travelers pacing</h2>
         <label class="range-label" for="shift"><span>Planned budget adjustment</span><strong>+${shift}%</strong></label>
         <input id="shift" type="range" min="0" max="40" step="5" value="${shift}" />
         <div class="range-scale"><span>No change</span><span>+40%</span></div>
@@ -138,13 +138,13 @@ function pacingView() {
       <article class="panel outcome-panel">
         <p class="eyebrow">MODELLED OUTCOME</p>
         <div class="outcome-number"><span>Additional planned spend</span><strong>${money(extra)}</strong></div>
-        <div class="outcome-number"><span>Guarded attributed value</span><strong>${money(guardedReturn)}</strong></div>
+        <div class="outcome-number"><span>Attributed revenue after 30% haircut</span><strong>${money(guardedReturn)}</strong></div>
         <div class="outcome-number"><span>Assumption</span><strong>${(source.roas * 0.7).toFixed(2)}× ROAS</strong></div>
         <button class="primary-action" id="record-scenario">Record review scenario</button>
         <small>This action saves nothing to an ad platform.</small>
       </article>
     </section>
-    <section class="panel assumption-table"><header><div><p class="eyebrow">WHY THIS IS NOT A FORECAST</p><h2>Assumption register</h2></div></header>
+    <section class="panel assumption-table"><header><div><p class="eyebrow">NOT A FORECAST</p><h2>Assumptions</h2></div></header>
       <table><thead><tr><th>Input</th><th>Observed</th><th>Scenario treatment</th></tr></thead><tbody>
         <tr><td>ROAS</td><td>${source.roas.toFixed(2)}× in fixture</td><td>30% haircut</td></tr>
         <tr><td>Pacing</td><td>${source.under}/${source.days} days under pace</td><td>Budget capacity only</td></tr>
@@ -156,9 +156,9 @@ function pacingView() {
 function qualityView() {
   const checks = evidence.quality.checks.map((check) => [check.name.replaceAll("_", " "), `observed ${check.observed}; expected ${check.expected}`, check.status === "pass" ? "Pass" : "Fail"]);
   return `
-    <section class="page-head compact"><div><p class="eyebrow">DETERMINISTIC REVIEW AGENTS</p><h1>Quality before commentary.</h1></div><p class="lede">The public console distinguishes structural checks from analyst judgement.</p></section>
+    <section class="page-head compact"><div><p class="eyebrow">RULE-BASED CHECKS</p><h1>Data quality checks</h1></div><p class="lede">Key, reconciliation and provenance checks from the last pipeline run.</p></section>
     <section class="quality-summary"><div class="quality-score"><span>${checks.filter((row) => row[2] === "Pass").length} / ${checks.length}</span><strong>checks pass</strong><small>Generated by the local pipeline, with source hashes recorded.</small></div>
-      <div class="quality-copy"><p class="eyebrow">RELEASE STATE</p><h2>${evidence.quality.status === "pass" ? "Integrity checks pass" : "Blocked"}</h2><p>These key, reconciliation and provenance results come from the committed generated evidence artifact.</p></div></section>
+      <div class="quality-copy"><h2>${evidence.quality.status === "pass" ? "Integrity checks pass" : "Blocked"}</h2><p>The pipeline writes these results to docs/generated/evidence.json, which is committed with the code.</p></div></section>
     <section class="panel check-list">${checks.map(([name, evidence, result]) => `<div class="check-row"><span class="check-mark ${result === "Review" ? "review" : ""}">${result === "Review" ? "!" : "✓"}</span><span><strong>${name}</strong><small>${evidence}</small></span><b class="${result.toLowerCase()}">${result}</b></div>`).join("")}</section>`;
 }
 
@@ -169,12 +169,12 @@ function lineageView() {
     ["SILVER", "Clean campaign facts", "Dates, joins and quality flags"],
     ["GOLD", "Decision features", "ROAS, CPA, pacing and model inputs"],
     ["MODEL", "XGBoost artefacts", "Performance and under-pacing risk"],
-    ["REVIEW", "Streamlit + agents", "Evidence before recommendation"],
+    ["REVIEW", "Streamlit + agents", "Dashboard and rule-based review"],
   ];
   return `
-    <section class="page-head compact"><div><p class="eyebrow">SYSTEM SHAPE</p><h1>Trace a recommendation to its row.</h1></div><p class="lede">The runnable Python project rebuilds every layer locally; this browser edition exposes the review surface.</p></section>
+    <section class="page-head compact"><div><h1>From raw CSV to model output</h1></div><p class="lede">The Python project rebuilds each layer locally. This page shows the output of the last run.</p></section>
     <section class="lineage">${layers.map(([tag, title, description], index) => `<article><span>${tag}</span><div><strong>${title}</strong><p>${description}</p></div>${index < layers.length - 1 ? `<i aria-hidden="true">→</i>` : ""}</article>`).join("")}</section>
-    <section class="split lineage-detail"><article class="panel"><p class="eyebrow">INPUT CONTRACT</p><h2>Committed evidence</h2><ul>${evidence.contracts.sources.map((source) => `<li>${source.rows} rows · ${source.name}</li>`).join("")}</ul></article><article class="panel"><p class="eyebrow">PROVENANCE</p><h2>Generated, not hand-entered</h2><ul><li>Contract ${evidence.contracts.contract_version}</li><li>Quality status ${evidence.quality.status}</li><li>Models include dated holdout metadata</li></ul><a class="inline-link" href="https://github.com/MatthewPaver/marketing-ml-lakehouse#canonical-setup">Run the engine locally →</a></article></section>
+    <section class="split lineage-detail"><article class="panel"><h2>Input contract</h2><ul>${evidence.contracts.sources.map((source) => `<li>${source.rows} rows · ${source.name}</li>`).join("")}</ul></article><article class="panel"><h2>Generated by the pipeline</h2><ul><li>Contract ${evidence.contracts.contract_version}</li><li>Quality status ${evidence.quality.status}</li><li>Models include dated holdout metadata</li></ul><a class="inline-link" href="https://github.com/MatthewPaver/marketing-ml-lakehouse#canonical-setup">Run the engine locally →</a></article></section>
     ${modelEvidence()}`;
 }
 
