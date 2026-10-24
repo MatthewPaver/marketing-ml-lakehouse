@@ -2,6 +2,9 @@ x-lakehouse: &lakehouse
   build:
     context: .
     dockerfile: lakehouse/Dockerfile
+    args:
+      APP_UID: ${LOCAL_UID:?Set LOCAL_UID to your non-root uid (id -u)}
+      APP_GID: ${LOCAL_GID:?Set LOCAL_GID to your group id (id -g)}
   working_dir: /app
   volumes:
     - .:/app

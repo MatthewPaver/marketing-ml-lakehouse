@@ -48,6 +48,15 @@ Publishing generated Pages evidence …
 
 `make contract` checks the input files using only the standard library, before any ML package is installed. Windows and no-Make commands are in [`DEMO.md`](DEMO.md). `make compose-pipeline` and `make compose-dashboard` run the same steps in Docker.
 
+Docker runs as a non-root account. The Make targets build with the caller's UID/GID;
+rebuild with `make docker-build` before using the direct `docker-run-*` targets.
+For Compose without Make, export `LOCAL_UID=$(id -u)` and `LOCAL_GID=$(id -g)` first.
+The entrypoint checks output files and parents before training and refuses incompatible
+permissions without changing host ownership. If an earlier root run left inaccessible
+outputs, review those paths and repair their ownership yourself before retrying.
+The whole checkout remains a writable bind mount, including the DuckDB parent;
+this local demo does not provide immutable application code or tenant isolation.
+
 ## How it works
 
 ```mermaid
