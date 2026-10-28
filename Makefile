@@ -40,7 +40,8 @@ test: install
 # Docker
 
 docker-build:
-	docker build -t local-lakehouse -f lakehouse/Dockerfile .
+	@test "$$(id -u)" -gt 0 || (echo "Run as a non-root user" && exit 2)
+	docker build --build-arg APP_UID="$$(id -u)" --build-arg APP_GID="$$(id -g)" -t local-lakehouse -f lakehouse/Dockerfile .
 
 docker-run-pipeline:
 	docker run --rm -v "$(PWD)":/app local-lakehouse bash -lc "python -m lakehouse.run_all"
@@ -49,7 +50,7 @@ docker-run-dashboard:
 	docker run --rm -p 8501:8501 -v "$(PWD)":/app local-lakehouse bash -lc "streamlit run lakehouse/dashboard/app.py --server.port 8501 --server.address 0.0.0.0"
 
 compose-pipeline:
-	docker compose run --rm pipeline
+	LOCAL_UID="$$(id -u)" LOCAL_GID="$$(id -g)" docker compose run --build --rm pipeline
 
 compose-dashboard:
-	docker compose up --build dashboard
+	LOCAL_UID="$$(id -u)" LOCAL_GID="$$(id -g)" docker compose up --build dashboard
