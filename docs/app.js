@@ -166,9 +166,8 @@ function overview() {
   const forecast = forecastResult();
   return `
     <section class="page-head">
-      <p class="eyebrow">Synthetic sample data · ${days} days in August 2024</p>
       <h1>Spend, revenue and data checks for six sample campaigns</h1>
-      <p class="lede">Marketing ML Lakehouse is a Python pipeline. It loads four campaign CSV files into a local database, checks them, and tests a forecast of next-day bookings. This page shows its output for six made-up travel campaigns. It is for marketing analysts and data engineers.</p>
+      <p class="lede">Marketing ML Lakehouse is a Python pipeline. It loads four campaign CSV files into a local database, checks them, and tests a forecast of next-day bookings. This page shows its output for six made-up travel campaigns over ${days} days in August 2024. It is for marketing analysts and data engineers.</p>
       <div class="actions">
         <button class="button primary" data-route-link="quality">See the data checks</button>
         <button class="button" data-route-link="campaigns">Compare the campaigns</button>
@@ -496,7 +495,7 @@ fetch("generated/evidence.json")
   .then((payload) => {
     prepareEvidence(payload);
     const footerRun = document.querySelector("#footer-run");
-    if (footerRun && payload.generated_at) footerRun.textContent = `Synthetic sample data, pipeline run on ${formatDate(payload.generated_at)}`;
+    if (footerRun && payload.generated_at) footerRun.textContent = `Made-up sample data. Pipeline last run on ${formatDate(payload.generated_at)}`;
     render();
   })
   .catch((error) => { workspace.innerHTML = `<p class="empty">The pipeline results could not be loaded: ${escapeHtml(error.message)}</p>`; });
