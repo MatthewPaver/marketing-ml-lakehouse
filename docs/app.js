@@ -71,10 +71,12 @@ function prepareEvidence(payload) {
 
 const state = { route: location.hash.slice(1) || "overview", campaignQuery: "", sort: "roas", shift: 15 };
 const workspace = document.querySelector("#workspace");
-const toast = document.querySelector(".toast");
 const money = (value, digits = 0) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", minimumFractionDigits: digits, maximumFractionDigits: digits }).format(value);
 const number = (value) => new Intl.NumberFormat("en-GB", { notation: value > 999999 ? "compact" : "standard", maximumFractionDigits: 1 }).format(value);
-const pct = (value) => `${value.toFixed(1)}%`;
+// Plain numbers shown to people go through Intl so separators and rounding stay consistent.
+const decimal = (value, digits) => new Intl.NumberFormat("en-GB", { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(value);
+const pct = (value) => new Intl.NumberFormat("en-GB", { style: "percent", minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(value / 100);
+const ratio = (value) => `${decimal(value, 2)}×`;
 const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
 const reduceMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -98,12 +100,6 @@ const pathHtml = (path) => escapeHtml(path).replace(/([/_])/g, "$1<wbr>");
 
 function pill(tone, text) {
   return `<span class="pill ${tone}">${text}</span>`;
-}
-
-function showToast(message) {
-  toast.textContent = message;
-  toast.classList.add("is-visible");
-  window.setTimeout(() => toast.classList.remove("is-visible"), 2400);
 }
 
 function sourceName(source) {
@@ -167,17 +163,19 @@ function overview() {
   return `
     <section class="page-head">
       <h1>Spend, revenue and data checks for six sample campaigns</h1>
-      <p class="lede">Marketing ML Lakehouse is a Python pipeline. It loads four campaign CSV files into a local database, checks them, and tests a forecast of next-day bookings. This page shows its output for six made-up travel campaigns over ${days} days in August 2024. It is for marketing analysts and data engineers.</p>
+      <p class="lede">This page shows six made-up travel campaigns over ${days} days in August 2024. Each £1 they spent was matched by £${decimal(blendedRoas, 2)} of booking revenue, and ${checks.pass} of ${checks.total} data checks pass. Marketing ML Lakehouse, a Python pipeline, loads four campaign CSV files into a local database, checks them and tests a forecast of next-day bookings. It is for marketing analysts and data engineers.</p>
       <div class="actions">
         <button class="button primary" data-route-link="quality">See the data checks</button>
         <button class="button" data-route-link="campaigns">Compare the campaigns</button>
       </div>
     </section>
 
+    <div class="overview-grid">
+    <div class="overview-main">
     <section class="section">
       <h2>Summary</h2>
       <p>Over ${days} days the ${inWords(campaigns.length)} campaigns spent ${money(totals.spend)}. Their ads were shown ${number(totals.impressions)} times, and the sample data credits them with ${totals.conversions} bookings worth ${money(totals.revenue)}.</p>
-      <p>That is a return on ad spend (ROAS) of ${blendedRoas.toFixed(2)}×. Return on ad spend is revenue divided by spend, so each £1 spent was matched by £${blendedRoas.toFixed(2)} of booking revenue.</p>
+      <p>That is a return on ad spend (ROAS) of ${ratio(blendedRoas)}. Return on ad spend is revenue divided by spend, so each £1 spent was matched by £${decimal(blendedRoas, 2)} of booking revenue.</p>
     </section>
 
     <section class="section">
@@ -187,21 +185,22 @@ function overview() {
           <li class="bar-row"><span class="bar-name">${escapeHtml(item.label)}</span><span class="bar-track" aria-hidden="true"><i style="width:${(item.revenue / topRevenue) * 100}%"></i></span><strong>${money(item.revenue)}</strong></li>`).join("")}
       </ul>
     </section>
+    </div>
 
-    <section class="section">
+    <section class="section overview-next">
       <h2>What to look at next</h2>
       <ul class="next-steps">
         ${atRisk.length ? `<li>
           <div>
             <h3>Check the ${inWords(atRisk.length)} ${atRisk.length === 1 ? "campaign that was" : "campaigns that were"} under pace on most days</h3>
-            <p>${atRisk.map((item) => `<button class="text-link" data-open-campaign="${escapeHtml(item.id)}">${escapeHtml(item.label)}</button> was under pace on ${item.under} of ${item.days} days and spent ${pct(item.utilisation * 100)} of its planned budget.`).join(" ")} Under pace means the budget file marks the day as spending behind plan.</p>
+            <p>${atRisk.map((item) => `<span class="pace-item"><button class="text-link" data-open-campaign="${escapeHtml(item.id)}">${escapeHtml(item.label)}</button> was under pace on ${item.under} of ${item.days} days and spent ${pct(item.utilisation * 100)} of its planned budget.</span>`).join(" ")} Under pace means the budget file marks the day as spending behind plan.</p>
           </div>
           <button class="button" data-route-link="pacing">Try a budget change</button>
         </li>` : ""}
         <li>
           <div>
             <h3>Look at ${escapeHtml(lowest.label)}</h3>
-            <p>It has the lowest return on ad spend of the six (${lowest.roas.toFixed(2)}× on ${money(lowest.spend)} of spend)${mostShown.id === lowest.id ? ", even though its ads were shown the most" : ""}.</p>
+            <p>It has the lowest return on ad spend of the six (${ratio(lowest.roas)} on ${money(lowest.spend)} of spend)${mostShown.id === lowest.id ? ", even though its ads were shown the most" : ""}.</p>
           </div>
           <button class="button" data-open-campaign="${escapeHtml(lowest.id)}">View this campaign</button>
         </li>
@@ -226,6 +225,7 @@ function overview() {
         </li>` : ""}
       </ul>
     </section>
+    </div>
 
     <section class="section">
       <h2>About this data</h2>
@@ -258,7 +258,7 @@ function campaignsView() {
             <th scope="row"><span class="cell-title">${escapeHtml(item.label)}</span><span class="cell-sub">ID <code>${escapeHtml(item.id)}</code></span></th>
             <td class="num" data-label="Spend">${money(item.spend)}</td>
             <td class="num" data-label="Booking revenue">${money(item.revenue)}</td>
-            <td class="num" data-label="Return on ad spend"><span class="value-with-pill">${item.roas < 2 ? pill("attention", "Below 2×") : ""}${item.roas.toFixed(2)}×</span></td>
+            <td class="num" data-label="Return on ad spend"><span class="value-with-pill">${item.roas < 2 ? pill("attention", "Below 2×") : ""}${ratio(item.roas)}</span></td>
             <td class="num" data-label="Bookings">${item.conversions}</td>
             <td class="num" data-label="Cost per booking">${money(item.cpa)}</td>
             <td class="num" data-label="Click-through rate">${pct(item.ctr)}</td>
@@ -292,10 +292,8 @@ function pacingView() {
         <dl class="result-list">
           <div><dt>Extra planned spend</dt><dd>${money(extra)}</dd></div>
           <div><dt>Booking revenue from the extra spend</dt><dd>${money(guardedReturn)}</dd></div>
-          <div><dt>Return on ad spend used</dt><dd>${(source.roas * 0.7).toFixed(2)}×</dd></div>
+          <div><dt>Return on ad spend used</dt><dd>${ratio(source.roas * 0.7)}</dd></div>
         </dl>
-        <button class="button primary" id="record-scenario">Mark this scenario as reviewed</button>
-        <p class="note">Nothing is saved or sent anywhere.</p>
       </div>
     </section>
     <section class="section">
@@ -305,7 +303,7 @@ function pacingView() {
         <table class="data-table stack-table">
           <thead><tr><th scope="col">Input</th><th scope="col">In the sample data</th><th scope="col">How the estimate uses it</th></tr></thead>
           <tbody>
-            <tr><th scope="row">Return on ad spend</th><td data-label="In the sample data">${source.roas.toFixed(2)}×</td><td data-label="How the estimate uses it">Cut by 30% to ${(source.roas * 0.7).toFixed(2)}×, to stay cautious</td></tr>
+            <tr><th scope="row">Return on ad spend</th><td data-label="In the sample data">${ratio(source.roas)}</td><td data-label="How the estimate uses it">Cut by 30% to ${ratio(source.roas * 0.7)}, to stay cautious</td></tr>
             <tr><th scope="row">Pacing</th><td data-label="In the sample data">Under pace on ${source.under} of ${source.days} days</td><td data-label="How the estimate uses it">Taken only as room to spend more</td></tr>
             <tr><th scope="row">Attribution</th><td data-label="In the sample data">Mixed 7-day click and 1-day view</td><td data-label="How the estimate uses it">Used as recorded</td></tr>
           </tbody>
@@ -423,8 +421,8 @@ function modelEvidence() {
   if (!forecast) return "";
   const { model, m, overlap } = forecast;
   const split = model.split;
-  const range = (pair) => `${pair[0].toFixed(2)} to ${pair[1].toFixed(2)}`;
-  const skill = (m.skill_over_baseline * 100).toFixed(0);
+  const range = (pair) => `${decimal(pair[0], 2)} to ${decimal(pair[1], 2)}`;
+  const skill = decimal(m.skill_over_baseline * 100, 0);
   const leakage = Object.entries(model.leakage_checks || {});
   return `<section class="section" id="model-evidence" tabindex="-1">
     <h2>Next-day bookings forecast test</h2>
@@ -433,8 +431,8 @@ function modelEvidence() {
       <table class="data-table stack-table">
         <thead><tr><th scope="col">Method</th><th scope="col" class="num">Average error, in bookings</th><th scope="col" class="num">Likely range (95%)</th></tr></thead>
         <tbody>
-          <tr><th scope="row">XGBoost model</th><td class="num" data-label="Average error, in bookings">${m.mae.toFixed(3)}</td><td class="num" data-label="Likely range (95%)">${range(m.mae_95pct_bootstrap)}</td></tr>
-          <tr><th scope="row">Simple guess: tomorrow equals today</th><td class="num" data-label="Average error, in bookings">${m.baseline_mae.toFixed(3)}</td><td class="num" data-label="Likely range (95%)">${range(m.baseline_mae_95pct_bootstrap)}</td></tr>
+          <tr><th scope="row">XGBoost model</th><td class="num" data-label="Average error, in bookings">${decimal(m.mae, 3)}</td><td class="num" data-label="Likely range (95%)">${range(m.mae_95pct_bootstrap)}</td></tr>
+          <tr><th scope="row">Simple guess: tomorrow equals today</th><td class="num" data-label="Average error, in bookings">${decimal(m.baseline_mae, 3)}</td><td class="num" data-label="Likely range (95%)">${range(m.baseline_mae_95pct_bootstrap)}</td></tr>
         </tbody>
       </table>
     </div>
@@ -472,7 +470,6 @@ function bind() {
   document.querySelector("#campaign-sort")?.addEventListener("change", (event) => { state.sort = event.target.value; render(); document.querySelector("#campaign-sort")?.focus(); });
   document.querySelector("#clear-search")?.addEventListener("click", () => { state.campaignQuery = ""; render(); document.querySelector("#campaign-search")?.focus(); });
   document.querySelector("#shift")?.addEventListener("input", (event) => { state.shift = Number(event.target.value); render(); document.querySelector("#shift")?.focus(); });
-  document.querySelector("#record-scenario")?.addEventListener("click", () => showToast("Marked as reviewed for this visit only. Nothing was saved."));
 }
 
 function navigate(route, anchor) {
