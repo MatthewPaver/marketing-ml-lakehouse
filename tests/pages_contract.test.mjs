@@ -21,6 +21,17 @@ test("Pages console exposes the complete evidence workflow", () => {
   assert.match(app, /return on ad spend \(ROAS\)/i);
 });
 
+test("Pages uses one accent and trackless revenue bars", () => {
+  const css = readFileSync(new URL("../docs/styles.css", import.meta.url), "utf8");
+  assert.doesNotMatch(css, /--lime/);
+  assert.match(css, /\.button\.primary \{[^}]*background: var\(--accent\)/);
+  assert.doesNotMatch(css, /\.bar-track \{[^}]*background/);
+  assert.match(css, /\.bar-track i \{[^}]*border-radius: 0 4px 4px 0/);
+  assert.match(css, /\.result-list dd \{[^}]*font-variant-numeric: tabular-nums/);
+  assert.doesNotMatch(css, /\.result-list dd \{[^}]*Georgia/);
+  assert.match(app, /<h1>Six sample campaigns: spend and data checks<\/h1>/);
+});
+
 test("Pages reads generated, versioned pipeline evidence", () => {
   assert.match(app, /generated\/evidence\.json/);
   assert.equal(evidence.schema_version, 1);
