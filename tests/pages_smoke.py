@@ -16,7 +16,7 @@ with sync_playwright() as playwright:
     page = browser.new_page(viewport={"width": 1280, "height": 800})
     page.goto("http://127.0.0.1:8766", wait_until="networkidle")
     assert "Marketing ML Lakehouse" in page.title()
-    assert page.get_by_text("Spend, revenue and data checks for six sample campaigns").is_visible()
+    assert page.get_by_role("heading", level=1, name="Six sample campaigns: spend and data checks").is_visible()
     page.screenshot(path=str(SCREENSHOT), animations="disabled")
 
     page.get_by_role("button", name="Campaigns", exact=True).click()

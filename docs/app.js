@@ -162,8 +162,8 @@ function overview() {
   const forecast = forecastResult();
   return `
     <section class="page-head">
-      <h1>Spend, revenue and data checks for six sample campaigns</h1>
-      <p class="lede">This page shows six made-up travel campaigns over ${days} days in August 2024. Each £1 they spent was matched by £${decimal(blendedRoas, 2)} of booking revenue, and ${checks.pass} of ${checks.total} data checks pass. Marketing ML Lakehouse, a Python pipeline, loads four campaign CSV files into a local database, checks them and tests a forecast of next-day bookings. It is for marketing analysts and data engineers.</p>
+      <h1>Six sample campaigns: spend and data checks</h1>
+      <p class="lede">Made-up campaigns from August 2024: each £1 spent was matched by £${decimal(blendedRoas, 2)} of booking revenue, and ${checks.pass} of ${checks.total} data checks pass.</p>
       <div class="actions">
         <button class="button primary" data-route-link="quality">See the data checks</button>
         <button class="button" data-route-link="campaigns">Compare the campaigns</button>
@@ -217,9 +217,9 @@ function overview() {
           <div>
             ${forecast.overlap
               ? `<h3>Do not rely on the bookings forecast yet</h3>
-                 <p>On ${forecast.model.split.test_rows} held-back campaign-days, the forecast was not shown to beat a simple guess that tomorrow's bookings equal today's.</p>`
+                 <p>On ${forecast.model.split.test_rows} held-back campaign-days, the forecast was not shown to beat a simple guess that tomorrow’s bookings equal today’s.</p>`
               : `<h3>Read the bookings forecast test</h3>
-                 <p>On ${forecast.model.split.test_rows} held-back campaign-days, the forecast's error range sits below that of a simple guess that tomorrow's bookings equal today's.</p>`}
+                 <p>On ${forecast.model.split.test_rows} held-back campaign-days, the forecast’s error range sits below that of a simple guess that tomorrow’s bookings equal today’s.</p>`}
           </div>
           <button class="button" data-route-link="lineage" data-anchor="model-evidence">See the forecast test</button>
         </li>` : ""}
@@ -229,6 +229,7 @@ function overview() {
 
     <section class="section">
       <h2>About this data</h2>
+      <p>Marketing ML Lakehouse is a Python pipeline. It loads four campaign CSV files into a local database, checks them and tests a forecast of next-day bookings. It is for marketing analysts and data engineers.</p>
       <p>All figures come from synthetic sample data: four CSV files committed with the code, covering six travel campaigns over ${days} days in August 2024. No ad account is connected, and nothing on this site changes a budget. Revenue is the booking value the sample data credits to each campaign. It is not an estimate of sales the ads caused. The figures show that the pipeline works. They say nothing about a real advertiser.</p>
     </section>`;
 }
@@ -244,8 +245,8 @@ function campaignsView() {
       <p class="lede">Each campaign targets one audience. Search by name or ID, or change the order.</p>
     </section>
     <section class="toolbar">
-      <label><span>Search campaigns</span><input id="campaign-search" type="search" value="${escapeHtml(state.campaignQuery)}" placeholder="Name or ID, for example AS_001" autocomplete="off" /></label>
-      <label><span>Order by</span><select id="campaign-sort"><option value="roas" ${state.sort === "roas" ? "selected" : ""}>Return on ad spend</option><option value="spend" ${state.sort === "spend" ? "selected" : ""}>Spend</option><option value="conversions" ${state.sort === "conversions" ? "selected" : ""}>Bookings</option></select></label>
+      <label><span>Search campaigns</span><input id="campaign-search" name="campaign-search" type="search" value="${escapeHtml(state.campaignQuery)}" placeholder="Name or ID, for example AS_001…" autocomplete="off" spellcheck="false" /></label>
+      <label><span>Order by</span><select id="campaign-sort" name="campaign-sort"><option value="roas" ${state.sort === "roas" ? "selected" : ""}>Return on ad spend</option><option value="spend" ${state.sort === "spend" ? "selected" : ""}>Spend</option><option value="conversions" ${state.sort === "conversions" ? "selected" : ""}>Bookings</option></select></label>
     </section>
     ${query ? `<p class="filter-note">Showing ${rows.length} of ${campaigns.length} campaigns. <button class="text-link" id="clear-search">Show all campaigns</button></p>` : ""}
     ${rows.length ? `<div class="table-wrap">
@@ -283,7 +284,7 @@ function pacingView() {
       <div class="scenario-control">
         <h2>${escapeHtml(source.label)}</h2>
         <label class="range-label" for="shift"><span>Increase the planned budget by</span><strong>+${shift}%</strong></label>
-        <input id="shift" type="range" min="0" max="40" step="5" value="${shift}" aria-valuetext="${shift} percent" />
+        <input id="shift" name="shift" type="range" min="0" max="40" step="5" value="${shift}" aria-valuetext="${shift} percent" />
         <div class="range-scale" aria-hidden="true"><span>No change</span><span>+40%</span></div>
         <p class="note">Its planned budget over the ${source.days} days was ${money(source.planned)}.</p>
       </div>
@@ -372,7 +373,7 @@ function qualityView() {
 
     <section class="section">
       <h2>Where the data came from</h2>
-      <p>Four synthetic CSV files in the repository's <code>data/raw/</code> folder. They are checked against version ${escapeHtml(contracts.contract_version)} of the file contract, which lists the columns and keys each file must have. Each file's SHA-256 fingerprint is recorded with the results.</p>
+      <p>Four synthetic CSV files in the repository’s <code>data/raw/</code> folder. They are checked against version ${escapeHtml(contracts.contract_version)} of the file contract, which lists the columns and keys each file must have. Each file’s SHA-256 fingerprint is recorded with the results.</p>
       <details>
         <summary>Show file fingerprints</summary>
         <ul class="fingerprints">${contracts.sources.map((source) => `<li><code>${escapeHtml(source.path)}</code><code class="hash">${escapeHtml(source.sha256 || "")}</code></li>`).join("")}</ul>
@@ -426,7 +427,7 @@ function modelEvidence() {
   const leakage = Object.entries(model.leakage_checks || {});
   return `<section class="section" id="model-evidence" tabindex="-1">
     <h2>Next-day bookings forecast test</h2>
-    <p>The model predicts each campaign's bookings for the next day, using only what was known at the end of the day before. It is compared with a simple guess: tomorrow's bookings equal today's. It learned from ${split.train_rows} campaign-days (${formatRange(split.train_start, split.train_end)}) and was tested on the next ${split.test_rows} (${formatRange(split.test_start, split.test_end)}), which it had not seen.</p>
+    <p>The model predicts each campaign’s bookings for the next day, using only what was known at the end of the day before. It is compared with a simple guess: tomorrow’s bookings equal today’s. It learned from ${split.train_rows} campaign-days (${formatRange(split.train_start, split.train_end)}) and was tested on the next ${split.test_rows} (${formatRange(split.test_start, split.test_end)}), which it had not seen.</p>
     <div class="table-wrap">
       <table class="data-table stack-table">
         <thead><tr><th scope="col">Method</th><th scope="col" class="num">Average error, in bookings</th><th scope="col" class="num">Likely range (95%)</th></tr></thead>
@@ -437,8 +438,8 @@ function modelEvidence() {
       </table>
     </div>
     <p class="result-line">${overlap
-      ? `${pill("attention", "Not shown to be better")} The model's average error is ${skill}% lower, but the two ranges overlap. With ${split.test_rows} test rows, this sample cannot tell the model apart from the simple guess.`
-      : `${pill("success", "Better than the simple guess")} The model's average error is ${skill}% lower, and the two ranges do not overlap.`}</p>
+      ? `${pill("attention", "Not shown to be better")} The model’s average error is ${skill}% lower, but the two ranges overlap. With ${split.test_rows} test rows, this sample cannot tell the model apart from the simple guess.`
+      : `${pill("success", "Better than the simple guess")} The model’s average error is ${skill}% lower, and the two ranges do not overlap.`}</p>
     <details>
       <summary>Method details</summary>
       <ul class="plain-list">
@@ -461,7 +462,28 @@ function render() {
   });
   workspace.innerHTML = ({ overview, campaigns: campaignsView, pacing: pacingView, quality: qualityView, lineage: lineageView })[state.route]();
   bind();
+  revealActiveTab();
 }
+
+// On phones the page tabs sit in one scrollable row. Keep the active tab in view and
+// fade whichever edge has more tabs beyond it.
+const pageTabs = document.querySelector(".topbar nav");
+function updateTabFade() {
+  const more = pageTabs.scrollWidth - pageTabs.clientWidth > 1;
+  pageTabs.classList.toggle("has-more-start", more && pageTabs.scrollLeft > 1);
+  pageTabs.classList.toggle("has-more-end", more && pageTabs.scrollLeft < pageTabs.scrollWidth - pageTabs.clientWidth - 1);
+}
+function revealActiveTab() {
+  const active = pageTabs.querySelector(".is-active");
+  if (active && pageTabs.scrollWidth > pageTabs.clientWidth) {
+    // Keep the active tab clear of the 48px edge fades by centring it when it sits under one.
+    const fade = 48, left = active.offsetLeft - pageTabs.offsetLeft, right = left + active.offsetWidth;
+    if (left < pageTabs.scrollLeft + fade || right > pageTabs.scrollLeft + pageTabs.clientWidth - fade) pageTabs.scrollTo({ left: Math.max(0, left - (pageTabs.clientWidth - active.offsetWidth) / 2), behavior: "auto" });
+  }
+  updateTabFade();
+}
+pageTabs.addEventListener("scroll", updateTabFade, { passive: true });
+window.addEventListener("resize", updateTabFade);
 
 function bind() {
   document.querySelectorAll("[data-route-link]").forEach((button) => button.addEventListener("click", () => navigate(button.dataset.routeLink, button.dataset.anchor)));
