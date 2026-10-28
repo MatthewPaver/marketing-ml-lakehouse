@@ -1,4 +1,4 @@
-# DEMO — Marketing ML Lakehouse
+# Demo: Marketing ML Lakehouse
 
 A sample-data path with no ad account or API keys. Installation time depends on your computer and connection.
 
@@ -6,7 +6,7 @@ A sample-data path with no ad account or API keys. Installation time depends on 
 
 Raw marketing CSVs can rebuild a trusted local analytics product from scratch:
 
-1. Load fixtures into DuckDB (bronze → silver → gold).
+1. Load the sample CSV files into DuckDB (bronze → silver → gold).
 2. Train an example XGBoost model from constructed features.
 3. Run deterministic quality / leakage checks.
 4. Open a Streamlit dashboard on the same artefacts.
@@ -30,7 +30,7 @@ git clone https://github.com/MatthewPaver/marketing-ml-lakehouse.git
 cd marketing-ml-lakehouse
 make install
 make run          # rebuild lakehouse + train
-make test         # rebuild from fixtures, then pytest
+make test         # rebuild from the sample data, then pytest
 make dashboard    # stays running at http://localhost:8501; stop with Ctrl+C
 ```
 
@@ -55,7 +55,7 @@ py -3.11 -m venv .venv
 
 Run from the repository root. If Python 3.11 is missing, install that version before the full dependency setup. If a source contract fails, fix the named input first; do not train on the remaining files. Re-running the pipeline replaces generated local tables/models and the local `docs/generated/` evidence snapshot, so keep your own source files and any results you need outside those generated folders. It does not publish them to GitHub Pages.
 
-Browser evidence console (no install): https://matthewpaver.github.io/marketing-ml-lakehouse/
+Browser demo console (no install): https://matthewpaver.github.io/marketing-ml-lakehouse/
 
 The browser console is a fixed demonstration snapshot, not a live view of the files you rebuild. Use the local Streamlit dashboard to inspect your current pipeline output. Do not expect local input changes to appear on the public website.
 

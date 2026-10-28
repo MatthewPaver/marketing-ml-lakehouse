@@ -7,12 +7,18 @@ const app = readFileSync(new URL("../docs/app.js", import.meta.url), "utf8");
 const evidence = JSON.parse(readFileSync(new URL("../docs/generated/evidence.json", import.meta.url), "utf8"));
 
 test("Pages console exposes the complete evidence workflow", () => {
-  for (const label of ["Overview", "Campaigns", "Pacing lab", "Data quality", "Lineage"]) {
-    assert.match(html, new RegExp(label));
+  for (const route of ["overview", "campaigns", "pacing", "quality", "lineage"]) {
+    assert.match(html, new RegExp(`data-route="${route}"`));
   }
+  for (const label of ["Overview", "Campaigns", "Budget scenario", "Data checks", "Pipeline"]) {
+    assert.match(html, new RegExp(`>${label}<`));
+  }
+  assert.match(html, /<title>Marketing ML Lakehouse/);
+  assert.doesNotMatch(html, /Marketing Lakehouse</);
   assert.ok(evidence.contracts.sources.every((source) => source.rows > 0));
   assert.ok(evidence.campaigns.length > 0);
-  assert.match(app, /No ad account is connected|No incrementality claim/);
+  assert.match(app, /No ad account is connected/);
+  assert.match(app, /return on ad spend \(ROAS\)/i);
 });
 
 test("Pages reads generated, versioned pipeline evidence", () => {

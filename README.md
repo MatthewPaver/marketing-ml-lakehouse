@@ -5,13 +5,13 @@ For analysts and data engineers who need campaign files turned into trustworthy 
 [![Validate](https://github.com/MatthewPaver/marketing-ml-lakehouse/actions/workflows/validate.yml/badge.svg)](https://github.com/MatthewPaver/marketing-ml-lakehouse/actions/workflows/validate.yml)
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
 
-![Marketing ML Lakehouse evidence console](docs/assets/console.png)
+![Overview page of the Marketing ML Lakehouse demo console](docs/assets/console.png)
 
-**Live evidence console (no install):** <https://matthewpaver.github.io/marketing-ml-lakehouse/>. CI rebuilds it from the pipeline output on every push to `main`, after the tests pass.
+**Live demo console (no install):** <https://matthewpaver.github.io/marketing-ml-lakehouse/>. CI rebuilds it from the pipeline output on every push to `main`, after the tests pass.
 
-**Headline result:** on the committed fixture the bookings model does **not** beat the prior-day baseline by more than noise. MAE 0.52 [0.33, 0.73] against 0.67 [0.42, 0.92] on a 24-row holdout. The repository reports that rather than hiding it; see [Results](#results).
+**Headline result:** on the committed sample data the bookings model does **not** beat the prior-day baseline by more than noise. MAE 0.52 [0.33, 0.73] against 0.67 [0.42, 0.92] on a 24-row holdout. The repository reports that rather than hiding it; see [Results](#results).
 
-The included data is a synthetic demonstration fixture (August 2024, six ad sets). It shows that the pipeline and the evaluation behave correctly. It says nothing about the performance of a real campaign.
+The included data is synthetic sample data (August 2024, six ad sets). It shows that the pipeline and the evaluation behave correctly. It says nothing about the performance of a real campaign.
 
 ## The problem
 
@@ -98,14 +98,14 @@ What this does not show:
 - **DuckDB on a laptop over Spark, Delta or a cloud warehouse.** The whole lakehouse rebuilds from committed CSVs in CI with no credentials, so every number in this README is reproducible. Cost: no partitioning, incremental merge or concurrent writers. [`TEMPLATE.md`](TEMPLATE.md) lists what a production version still needs.
 - **Contracts checked before ingestion, in the standard library, over validating after load in pandas.** A bad file fails with its name and reason before any table is touched, and `make contract` runs before the ML dependencies are installed. Cost: the contract is structural (columns, non-null fields, keys). It does not catch a plausible but wrong value.
 - **Whole-date walk-forward holdout and a persistence baseline over a random row split.** A random split puts rows from the same day in both training and test data, and an earlier version of this repository had same-day target leakage. `assert_prospective_features` now rejects any `target_` or `next_` column as a feature. Cost: with 20 dates of data the holdout is four days, so the intervals are wide.
-- **The console reads generated evidence over hand-written numbers.** Pages deploys only after `make test` passes, and the browser renders `evidence.json` from that run, so the public figures cannot drift from the pipeline. Cost: the console is a snapshot of the fixture, not a view of your local rebuild.
+- **The console reads generated evidence over hand-written numbers.** Pages deploys only after `make test` passes, and the browser renders `evidence.json` from that run, so the public figures cannot drift from the pipeline. Cost: the console is a snapshot of the sample data, not a view of your local rebuild.
 - **Deterministic rule checks over LLM commentary.** The reviewers in `agents.py` are threshold functions with unit tests, so the same input always gives the same verdict. The Streamlit dashboard can call an OpenAI-compatible endpoint for chart summaries, but only when `LLM_ENDPOINT` is set, and otherwise falls back to a rule-based sentence. Cost: the rules only catch what their thresholds encode.
 
 ## Limits and non-goals
 
 - The committed data is synthetic: 6 ad sets over about three weeks. Results prove that the pipeline and the evaluation behave correctly, nothing more.
-- It does not connect to an ad platform, change a budget or estimate incrementality. The console's attribution is a mixed 7-day-click / 1-day-view window taken from the fixture.
-- The console's overview headline and its "pacing lab" budget-move estimate (observed ROAS cut by 30%) are illustrations on the fixture, not recommendations.
+- It does not connect to an ad platform, change a budget or estimate incrementality. Revenue is credited using the attribution windows recorded in the sample data (7-day click, 1-day click and 1-day view).
+- The console's overview and its budget scenario (observed return on ad spend cut by 30%) are illustrations on the sample data, not recommendations.
 - Single-process DuckDB. No orchestration, retries, backfill, access control or model registry.
 - Dependencies are version ranges in `requirements.txt`, not a lockfile.
 
@@ -114,7 +114,7 @@ What this does not show:
 ```text
 lakehouse/          pipeline package: contracts, ingest, transform, quality, ml, agents, dashboard
 contracts/          versioned raw-source contract
-data/raw/           four committed CSV fixtures
+data/raw/           four committed sample CSV files
 docs/               Pages console (index.html, app.js), generated evidence, GA4 profile notes
 public_data/ga4/    BigQuery export query for the optional GA4 profile
 tests/              pytest suite, Pages contract test (Node), Playwright console script
