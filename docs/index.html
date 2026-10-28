@@ -3,39 +3,34 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Browser demo of the Marketing ML Lakehouse: campaign metrics, pacing, data quality checks and lineage computed from committed sample CSV files." />
+    <meta name="description" content="Demo of the Marketing ML Lakehouse: spend, revenue, budget pacing, data checks and a next-day bookings forecast test for six synthetic travel campaigns." />
     <meta name="theme-color" content="#f2f5f1" />
-    <title>Marketing ML Lakehouse · Evidence console</title>
+    <title>Marketing ML Lakehouse · Sample-data demo</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <a class="skip-link" href="#workspace">Skip to workspace</a>
+    <a class="skip-link" href="#workspace">Skip to content</a>
     <header class="topbar">
-      <a class="brand" href="#overview" aria-label="Marketing ML Lakehouse home">
+      <a class="brand" href="#overview" aria-label="Marketing ML Lakehouse overview">
         <span class="mark" aria-hidden="true">ML</span>
-        <span><strong>Marketing Lakehouse</strong><small>Evidence console</small></span>
+        <span><strong>Marketing ML Lakehouse</strong><small>Sample-data demo</small></span>
       </a>
-      <nav aria-label="Workspace">
+      <nav aria-label="Pages">
         <button class="nav-button is-active" data-route="overview">Overview</button>
         <button class="nav-button" data-route="campaigns">Campaigns</button>
-        <button class="nav-button" data-route="pacing">Pacing lab</button>
-        <button class="nav-button" data-route="quality">Data quality</button>
-        <button class="nav-button" data-route="lineage">Lineage</button>
+        <button class="nav-button" data-route="pacing">Budget scenario</button>
+        <button class="nav-button" data-route="quality">Data checks</button>
+        <button class="nav-button" data-route="lineage">Pipeline</button>
       </nav>
-      <a class="source-link" href="https://github.com/MatthewPaver/marketing-ml-lakehouse">View source</a>
+      <a class="source-link" href="https://github.com/MatthewPaver/marketing-ml-lakehouse">View the code on GitHub</a>
     </header>
-
-    <div class="demo-note">
-      <strong>REPRODUCIBLE DEMO</strong>
-      <span>Metrics are computed from the CSV fixtures committed with the repository. No ad account is connected.</span>
-    </div>
 
     <main id="workspace" tabindex="-1"></main>
     <div class="toast" role="status" aria-live="polite"></div>
 
     <footer>
-      <span>DuckDB · XGBoost · Streamlit · deterministic review agents</span>
-      <span>Sample travel marketing data · August 2024</span>
+      <span>Built with DuckDB, XGBoost and Streamlit</span>
+      <span id="footer-run">Made-up sample data for August 2024</span>
     </footer>
     <script src="app.js"></script>
   </body>
